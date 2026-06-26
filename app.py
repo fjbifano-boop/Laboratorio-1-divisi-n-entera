@@ -16,20 +16,6 @@ resto = total % grupo
 
 st.divider()
 
-st.subheader("Resultado")
-
-st.markdown(f"### {total} = {grupo} × {cociente} + {resto}")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.metric("Grupos completos", cociente)
-
-with col2:
-    st.metric("Objetos que sobran", resto)
-
-st.divider()
-
 st.subheader("Representación")
 
 for _ in range(cociente):
@@ -40,6 +26,23 @@ if resto > 0:
     st.write("🟨 " * resto)
 else:
     st.success("No sobra ningún objeto.")
+
+st.divider()
+
+mostrar_igualdad = st.checkbox("Mostrar la igualdad de la división")
+
+if mostrar_igualdad:
+    st.subheader("Escritura matemática")
+
+    st.markdown(f"### {total} = {grupo} × {cociente} + {resto}")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Grupos completos", cociente)
+
+    with col2:
+        st.metric("Objetos que sobran", resto)
 
 st.divider()
 
