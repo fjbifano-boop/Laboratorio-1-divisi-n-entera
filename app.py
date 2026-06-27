@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw, ImageFont
+import matplotlib.pyplot as plt
 from io import BytesIO
 
 st.set_page_config(
@@ -11,98 +11,105 @@ st.set_page_config(
 # Funciones auxiliares
 # -----------------------------
 
-def cargar_fuente(tamano, negrita=False):
-    posibles = [
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if negrita else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf" if negrita else "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
-    ]
-    for ruta in posibles:
-        try:
-            return ImageFont.truetype(ruta, tamano)
-        except:
-            pass
-    return ImageFont.load_default()
-
-
 def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     """
-    Dibuja la cuenta de dividir en formato escolar argentino:
-
-        dividendo | divisor
-       -producto | cociente
-        resto
+    Dibuja la cuenta de dividir en formato escolar.
+    Usa matplotlib para evitar problemas de HTML, SVG o fuentes faltantes.
     """
-    ancho, alto = 760, 420
-    img = Image.new("RGB", (ancho, alto), "white")
-    draw = ImageDraw.Draw(img)
+    fig, ax = plt.subplots(figsize=(8, 4.6), dpi=150)
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 7)
+    ax.axis("off")
 
-    fuente_num = cargar_fuente(62, True)
-    fuente_num_med = cargar_fuente(52, True)
-    fuente_txt = cargar_fuente(24, True)
-    fuente_txt_chica = cargar_fuente(21, False)
+    # Colores de alto contraste
+    negro = "#111111"
+    azul = "#0057D9"
+    verde = "#137A2A"
+    naranja = "#C45100"
+    rojo = "#C00000"
+    gris = "#DDDDDD"
 
-    negro = "#111827"
-    azul = "#1d4ed8"
-    verde = "#15803d"
-    naranja = "#b45309"
-    rojo = "#dc2626"
-    gris = "#d1d5db"
+    # Fondo blanco con borde
+    rect = plt.Rectangle(
+        (0.2, 0.2), 9.6, 6.6,
+        linewidth=2,
+        edgecolor=gris,
+        facecolor="white"
+    )
+    ax.add_patch(rect)
 
-    # Fondo y borde
-    draw.rounded_rectangle([15, 15, ancho-15, alto-15], radius=22, fill="white", outline=gris, width=3)
+    # Posiciones
+    x_izq = 3.3
+    x_der = 6.4
 
-    # Posiciones principales
-    x_dividendo = 260
-    x_divisor = 500
-    y_arriba = 110
-    y_abajo = 210
-    y_resto = 310
+    # Estructura tipo galera escolar: dividendo | divisor ; abajo producto | cociente
+    ax.text(x_izq, 5.2, str(dividendo), fontsize=40, fontweight="bold",
+            ha="center", va="center", color=naranja)
 
-    # Números
-    draw.text((x_dividendo, y_arriba), str(dividendo), font=fuente_num, fill=naranja, anchor="mm")
-    draw.text((x_divisor, y_arriba), str(divisor), font=fuente_num, fill=azul, anchor="mm")
+    ax.text(x_der, 5.2, str(divisor), fontsize=40, fontweight="bold",
+            ha="center", va="center", color=azul)
 
-    # Galera: línea vertical y línea horizontal
-    draw.line([(370, 65), (370, 275)], fill=negro, width=6)
-    draw.line([(370, 145), (610, 145)], fill=negro, width=6)
+    ax.plot([4.8, 4.8], [2.0, 6.1], color=negro, linewidth=4)
+    ax.plot([4.8, 7.6], [4.4, 4.4], color=negro, linewidth=4)
 
-    # Cociente
-    draw.text((x_divisor, y_abajo), str(cociente), font=fuente_num, fill=verde, anchor="mm")
+    ax.text(x_der, 3.4, str(cociente), fontsize=40, fontweight="bold",
+            ha="center", va="center", color=verde)
 
-    # Producto restado y línea de resta
-    draw.text((x_dividendo, y_abajo), f"−{producto}", font=fuente_num_med, fill=verde, anchor="mm")
-    draw.line([(170, 248), (340, 248)], fill=negro, width=5)
+    ax.text(x_izq, 3.4, f"−{producto}", fontsize=34, fontweight="bold",
+            ha="center", va="center", color=verde)
 
-    # Resto
-    draw.text((x_dividendo, y_resto), str(resto), font=fuente_num, fill=rojo, anchor="mm")
+    ax.plot([2.3, 4.3], [2.65, 2.65], color=negro, linewidth=3)
 
-    # Etiquetas
-    draw.text((72, 112), "Dividendo", font=fuente_txt, fill=naranja, anchor="lm")
-    draw.line([(182, 112), (218, 112)], fill=naranja, width=4)
-    draw.polygon([(218,112), (207,104), (207,120)], fill=naranja)
+    ax.text(x_izq, 1.7, str(resto), fontsize=40, fontweight="bold",
+            ha="center", va="center", color=rojo)
 
-    draw.text((600, 92), "Divisor", font=fuente_txt, fill=azul, anchor="lm")
-    draw.line([(585, 100), (540, 108)], fill=azul, width=4)
-    draw.polygon([(540,108), (552,100), (554,116)], fill=azul)
-
-    draw.text((600, 210), "Cociente", font=fuente_txt, fill=verde, anchor="lm")
-    draw.line([(585, 210), (540, 210)], fill=verde, width=4)
-    draw.polygon([(540,210), (552,202), (552,218)], fill=verde)
-
-    draw.text((335, 325), "Resto", font=fuente_txt, fill=rojo, anchor="lm")
-    draw.line([(320, 318), (292, 310)], fill=rojo, width=4)
-    draw.polygon([(292,310), (306,306), (302,322)], fill=rojo)
-
-    # Nota inferior
-    draw.text(
-        (ancho/2, 382),
-        f"{dividendo} objetos repartidos en {divisor} grupos: {cociente} en cada grupo y {resto} sin repartir",
-        font=fuente_txt_chica,
-        fill=negro,
-        anchor="mm"
+    # Etiquetas claras y grandes
+    ax.annotate(
+        "Dividendo",
+        xy=(x_izq - 0.35, 5.2), xytext=(1.0, 5.2),
+        fontsize=16, fontweight="bold", color=naranja,
+        arrowprops=dict(arrowstyle="->", lw=2.5, color=naranja),
+        ha="left", va="center"
     )
 
-    return img
+    ax.annotate(
+        "Divisor",
+        xy=(x_der + 0.05, 5.2), xytext=(8.0, 5.2),
+        fontsize=16, fontweight="bold", color=azul,
+        arrowprops=dict(arrowstyle="->", lw=2.5, color=azul),
+        ha="left", va="center"
+    )
+
+    ax.annotate(
+        "Cociente",
+        xy=(x_der + 0.05, 3.4), xytext=(8.0, 3.4),
+        fontsize=16, fontweight="bold", color=verde,
+        arrowprops=dict(arrowstyle="->", lw=2.5, color=verde),
+        ha="left", va="center"
+    )
+
+    ax.annotate(
+        "Resto",
+        xy=(x_izq + 0.25, 1.7), xytext=(4.5, 1.1),
+        fontsize=16, fontweight="bold", color=rojo,
+        arrowprops=dict(arrowstyle="->", lw=2.5, color=rojo),
+        ha="left", va="center"
+    )
+
+    ax.text(
+        5, 0.55,
+        f"{dividendo} objetos repartidos en {divisor} grupos: {cociente} en cada grupo y {resto} sin repartir",
+        fontsize=13,
+        ha="center",
+        va="center",
+        color=negro
+    )
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    buffer.seek(0)
+    return buffer
 
 
 def mostrar_paso(numero, titulo):
