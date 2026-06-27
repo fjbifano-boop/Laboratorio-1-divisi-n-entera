@@ -10,59 +10,42 @@ st.set_page_config(
 # -----------------------------
 st.markdown("""
 <style>
-:root {
-    --azul: #1d4ed8;
-    --azul-claro: #eaf2ff;
-    --azul-borde: #93c5fd;
-    --verde: #15803d;
-    --verde-claro: #ecfdf3;
-    --naranja: #c2410c;
-    --naranja-claro: #fff3e8;
-    --gris: #f8fafc;
-    --gris-borde: #cbd5e1;
-    --texto: #111827;
-}
-
-html, body, [class*="css"] {
-    color: var(--texto);
-}
-
 .block-container {
-    padding-top: 1.5rem;
+    padding-top: 1.2rem;
     padding-bottom: 2rem;
     max-width: 1150px;
 }
 
-.header-lim {
-    background: #1d4ed8;
-    color: #ffffff;
+.lim-header {
+    background: #1f4ed8;
+    color: white;
     padding: 18px 24px;
-    border-radius: 16px;
+    border-radius: 14px;
     margin-bottom: 24px;
 }
 
-.header-lim h1 {
+.lim-header h1 {
     margin: 0;
+    color: white;
     font-size: 28px;
-    color: #ffffff;
 }
 
-.header-lim p {
-    margin: 4px 0 0 0;
+.lim-header p {
+    margin: 5px 0 0 0;
+    color: white;
     font-size: 17px;
-    color: #ffffff;
 }
 
 .paso {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 26px;
     margin-bottom: 12px;
 }
 
 .numero-paso {
-    background: #1d4ed8;
+    background: #1f4ed8;
     color: white;
     width: 38px;
     height: 38px;
@@ -81,26 +64,17 @@ html, body, [class*="css"] {
 }
 
 .tarjeta {
-    border: 1px solid var(--gris-borde);
-    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    background: white;
     border-radius: 14px;
     padding: 18px;
     margin-bottom: 16px;
 }
 
 .tarjeta-azul {
-    border: 1px solid var(--azul-borde);
-    background: var(--azul-claro);
-    color: #0f172a;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin: 12px 0;
-}
-
-.tarjeta-verde {
-    border: 1px solid #86efac;
-    background: var(--verde-claro);
-    color: #0f172a;
+    border: 1px solid #93c5fd;
+    background: #eff6ff;
+    color: #111827;
     border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
@@ -108,8 +82,17 @@ html, body, [class*="css"] {
 
 .tarjeta-naranja {
     border: 1px solid #fdba74;
-    background: var(--naranja-claro);
-    color: #0f172a;
+    background: #fff7ed;
+    color: #111827;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+
+.tarjeta-verde {
+    border: 1px solid #86efac;
+    background: #f0fdf4;
+    color: #111827;
     border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
@@ -122,8 +105,8 @@ html, body, [class*="css"] {
 }
 
 .metric-box {
-    border: 1px solid var(--azul-borde);
-    background: #ffffff;
+    border: 1px solid #93c5fd;
+    background: white;
     border-radius: 14px;
     padding: 14px;
     text-align: center;
@@ -137,7 +120,7 @@ html, body, [class*="css"] {
 .metric-number {
     font-size: 42px;
     font-weight: 800;
-    color: #1d4ed8;
+    color: #1f4ed8;
     line-height: 1.1;
 }
 
@@ -160,72 +143,15 @@ html, body, [class*="css"] {
     color: #111827;
 }
 
-.division-box {
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0;
-}
-
-.division-escolar {
-    font-family: 'Courier New', monospace;
-    font-size: 42px;
-    line-height: 1.25;
+.lista-cuenta p {
+    margin: 8px 0;
     color: #111827;
 }
 
-.fila-superior,
-.fila-principal,
-.fila-resta,
-.fila-resto {
-    display: grid;
-    grid-template-columns: 110px 32px 110px;
-    align-items: center;
-}
-
-.divisor {
-    text-align: center;
-    color: #1d4ed8;
-    font-weight: 800;
-}
-
-.dividendo {
-    border-left: 5px solid #111827;
-    border-bottom: 5px solid #111827;
-    padding-left: 18px;
-    text-align: center;
-    color: #c2410c;
-    font-weight: 800;
-}
-
-.cociente {
-    border-bottom: 5px solid #111827;
-    padding-left: 18px;
-    text-align: center;
-    color: #15803d;
-    font-weight: 800;
-}
-
-.resta {
-    text-align: center;
-    border-bottom: 4px solid #111827;
-    color: #15803d;
-    font-weight: 800;
-}
-
-.resto {
-    text-align: center;
-    color: #c2410c;
-    font-weight: 800;
-}
-
-.etiqueta {
-    font-size: 15px;
-    font-weight: 800;
-}
-
-.azul { color: #1d4ed8; font-weight: 800; }
-.verde { color: #15803d; font-weight: 800; }
-.naranja { color: #c2410c; font-weight: 800; }
+.color-dividendo { color: #b45309; font-weight: 800; }
+.color-divisor { color: #1d4ed8; font-weight: 800; }
+.color-cociente { color: #15803d; font-weight: 800; }
+.color-resto { color: #dc2626; font-weight: 800; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -243,11 +169,63 @@ def paso(numero, titulo):
     )
 
 
+def cuenta_dividir_svg(dividendo, divisor, cociente, producto, resto):
+    """
+    Dibuja la cuenta escolar en formato de galera:
+    dividendo a la izquierda, divisor arriba a la derecha,
+    cociente debajo del divisor, producto restado y resto abajo.
+    """
+    return f"""
+    <svg width="720" height="370" viewBox="0 0 720 370" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="700" height="350" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+
+        <!-- Cuenta escolar -->
+        <text x="245" y="115" text-anchor="middle" font-family="Courier New, monospace" font-size="56" font-weight="700" fill="#b45309">{dividendo}</text>
+        <text x="455" y="115" text-anchor="middle" font-family="Courier New, monospace" font-size="56" font-weight="700" fill="#1d4ed8">{divisor}</text>
+        <line x1="350" y1="70" x2="350" y2="260" stroke="#111827" stroke-width="5"/>
+        <line x1="350" y1="135" x2="535" y2="135" stroke="#111827" stroke-width="5"/>
+        <text x="455" y="210" text-anchor="middle" font-family="Courier New, monospace" font-size="56" font-weight="700" fill="#15803d">{cociente}</text>
+
+        <text x="245" y="185" text-anchor="middle" font-family="Courier New, monospace" font-size="50" font-weight="700" fill="#15803d">−{producto}</text>
+        <line x1="170" y1="205" x2="320" y2="205" stroke="#111827" stroke-width="4"/>
+        <text x="245" y="270" text-anchor="middle" font-family="Courier New, monospace" font-size="56" font-weight="700" fill="#dc2626">{resto}</text>
+
+        <!-- Etiquetas -->
+        <text x="105" y="115" font-family="Arial, sans-serif" font-size="18" fill="#b45309" font-weight="700">Dividendo</text>
+        <path d="M165 110 C185 105, 205 105, 225 110" fill="none" stroke="#b45309" stroke-width="3" marker-end="url(#arrowOrange)"/>
+
+        <text x="535" y="85" font-family="Arial, sans-serif" font-size="18" fill="#1d4ed8" font-weight="700">Divisor</text>
+        <path d="M520 90 C500 92, 485 98, 470 105" fill="none" stroke="#1d4ed8" stroke-width="3" marker-end="url(#arrowBlue)"/>
+
+        <text x="535" y="200" font-family="Arial, sans-serif" font-size="18" fill="#15803d" font-weight="700">Cociente</text>
+        <path d="M520 198 C500 200, 485 205, 470 208" fill="none" stroke="#15803d" stroke-width="3" marker-end="url(#arrowGreen)"/>
+
+        <text x="330" y="294" font-family="Arial, sans-serif" font-size="18" fill="#dc2626" font-weight="700">Resto</text>
+        <path d="M320 288 C300 282, 282 275, 260 268" fill="none" stroke="#dc2626" stroke-width="3" marker-end="url(#arrowRed)"/>
+
+        <defs>
+            <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#b45309"/>
+            </marker>
+            <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#1d4ed8"/>
+            </marker>
+            <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#15803d"/>
+            </marker>
+            <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#dc2626"/>
+            </marker>
+        </defs>
+    </svg>
+    """
+
+
 # -----------------------------
 # Encabezado
 # -----------------------------
 st.markdown("""
-<div class="header-lim">
+<div class="lim-header">
     <h1>LIM · Laboratorio de división</h1>
     <p>Exploramos cómo repartir objetos en grupos iguales</p>
 </div>
@@ -385,51 +363,25 @@ paso(5, "Miramos la cuenta de dividir")
 mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
 
 if mostrar_cuenta:
-    col_a, col_b = st.columns([1, 1.4])
+    col_a, col_b = st.columns([1, 1.5])
 
     with col_a:
         st.markdown(
             f"""
-            <div class="tarjeta">
+            <div class="tarjeta lista-cuenta">
                 <p>La cuenta muestra cómo se reparten los <b>{total}</b> objetos en <b>{cantidad_grupos}</b> grupos.</p>
-                <p><span class="etiqueta naranja">{total}</span> → dividendo: cantidad total de objetos.</p>
-                <p><span class="etiqueta azul">{cantidad_grupos}</span> → divisor: cantidad de grupos.</p>
-                <p><span class="etiqueta verde">{objetos_por_grupo}</span> → cociente: objetos en cada grupo.</p>
-                <p><span class="etiqueta naranja">{sin_repartir}</span> → resto: objetos que no se pudieron repartir.</p>
+                <p><span class="color-dividendo">{total}</span> → dividendo: cantidad total de objetos.</p>
+                <p><span class="color-divisor">{cantidad_grupos}</span> → divisor: cantidad de grupos.</p>
+                <p><span class="color-cociente">{objetos_por_grupo}</span> → cociente: objetos en cada grupo.</p>
+                <p><span class="color-resto">{sin_repartir}</span> → resto: objetos que no se pudieron repartir.</p>
+                <p><b>{producto}</b> es la cantidad de objetos que sí se pudieron repartir en partes iguales.</p>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     with col_b:
-        st.markdown(f"""
-        <div class="tarjeta">
-            <div class="division-box">
-              <div class="division-escolar">
-                <div class="fila-superior">
-                  <div></div>
-                  <div></div>
-                  <div class="cociente">{objetos_por_grupo}</div>
-                </div>
-                <div class="fila-principal">
-                  <div class="divisor">{cantidad_grupos}</div>
-                  <div></div>
-                  <div class="dividendo">{total}</div>
-                </div>
-                <div class="fila-resta">
-                  <div></div>
-                  <div></div>
-                  <div class="resta">−{producto}</div>
-                </div>
-                <div class="fila-resto">
-                  <div></div>
-                  <div></div>
-                  <div class="resto">{sin_repartir}</div>
-                </div>
-              </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(cuenta_dividir_svg(total, cantidad_grupos, objetos_por_grupo, producto, sin_repartir), unsafe_allow_html=True)
 
 # -----------------------------
 # Paso 6
@@ -443,19 +395,19 @@ if mostrar_igualdad:
         f"""
         <div class="tarjeta">
             <div style="font-size:42px; text-align:center; font-weight:800; color:#111827;">
-                <span class="naranja">{total}</span>
+                <span class="color-dividendo">{total}</span>
                 =
-                <span class="azul">{cantidad_grupos}</span>
+                <span class="color-divisor">{cantidad_grupos}</span>
                 ×
-                <span class="verde">{objetos_por_grupo}</span>
+                <span class="color-cociente">{objetos_por_grupo}</span>
                 +
-                <span class="naranja">{sin_repartir}</span>
+                <span class="color-resto">{sin_repartir}</span>
             </div>
             <div style="text-align:center; margin-top:10px; color:#111827;">
-                <span class="naranja">dividendo</span> ·
-                <span class="azul">divisor</span> ·
-                <span class="verde">cociente</span> ·
-                <span class="naranja">resto</span>
+                <span class="color-dividendo">dividendo</span> ·
+                <span class="color-divisor">divisor</span> ·
+                <span class="color-cociente">cociente</span> ·
+                <span class="color-resto">resto</span>
             </div>
         </div>
         """,
