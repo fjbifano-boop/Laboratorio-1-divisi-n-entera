@@ -69,13 +69,23 @@ elif sin_agrupar == grupo - 1:
 else:
     st.info(f"Faltan {faltan} objetos para completar otro grupo.")
 
+st.subheader("Desafíos para pensar antes de mostrar otras escrituras")
+
+st.markdown("""
+1. Dejá fijo el tamaño de los grupos y agregá objetos de a uno.
+2. Observá cuándo se completa un nuevo grupo.
+3. Explicá con tus palabras qué pasa con los objetos que todavía no forman un grupo completo.
+4. ¿Puede quedar sin completar una fila con tantos objetos como tiene un grupo completo?
+5. ¿Qué cambia justo cuando se completa un nuevo grupo?
+""")
+
 st.divider()
+
+st.subheader("Otras formas de representar lo que viste")
 
 mostrar_igualdad = st.checkbox("Mostrar la escritura matemática")
 
 if mostrar_igualdad:
-    st.subheader("Escritura matemática")
-
     st.markdown(f"### {total} = {grupo} × {grupos_completos} + {sin_agrupar}")
 
     st.markdown(f"""
@@ -87,14 +97,10 @@ En esta escritura:
 - **{sin_agrupar}** es la cantidad de objetos que no alcanzan para formar otro grupo completo. En la división se llama **resto**.
 """)
 
-st.divider()
-
 mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
 
 if mostrar_cuenta:
     producto = grupo * grupos_completos
-
-    st.subheader("Cuenta de dividir")
 
     cuenta = f"""
           {grupos_completos}
@@ -112,15 +118,4 @@ En la cuenta:
 
 - **{producto}** representa los objetos que sí pudieron organizarse en grupos completos.
 - **{total} - {producto} = {sin_agrupar}** muestra los objetos que no alcanzan para formar otro grupo completo.
-""")
-
-st.divider()
-
-st.subheader("Desafíos")
-
-st.markdown("""
-1. Dejá fijo el tamaño de los grupos y agregá objetos de a uno.
-2. Observá cuándo se completa un nuevo grupo.
-3. Antes de mostrar la escritura matemática, explicá con tus palabras qué está pasando.
-4. Después activá la escritura matemática y buscá dónde aparece cada parte.
 """)
