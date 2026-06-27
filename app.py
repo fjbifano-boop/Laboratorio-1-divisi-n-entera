@@ -11,13 +11,20 @@ st.set_page_config(
 st.markdown("""
 <style>
 :root {
-    --azul: #2563eb;
-    --azul-suave: #eff6ff;
-    --borde-azul: #bfdbfe;
-    --verde: #16a34a;
-    --naranja: #f97316;
+    --azul: #1d4ed8;
+    --azul-claro: #eaf2ff;
+    --azul-borde: #93c5fd;
+    --verde: #15803d;
+    --verde-claro: #ecfdf3;
+    --naranja: #c2410c;
+    --naranja-claro: #fff3e8;
     --gris: #f8fafc;
-    --texto: #0f172a;
+    --gris-borde: #cbd5e1;
+    --texto: #111827;
+}
+
+html, body, [class*="css"] {
+    color: var(--texto);
 }
 
 .block-container {
@@ -27,22 +34,23 @@ st.markdown("""
 }
 
 .header-lim {
-    background: linear-gradient(90deg, #0f172a, #1e3a8a);
-    color: white;
+    background: #1d4ed8;
+    color: #ffffff;
     padding: 18px 24px;
-    border-radius: 18px;
+    border-radius: 16px;
     margin-bottom: 24px;
 }
 
 .header-lim h1 {
     margin: 0;
     font-size: 28px;
+    color: #ffffff;
 }
 
 .header-lim p {
     margin: 4px 0 0 0;
     font-size: 17px;
-    opacity: 0.9;
+    color: #ffffff;
 }
 
 .paso {
@@ -54,7 +62,7 @@ st.markdown("""
 }
 
 .numero-paso {
-    background: var(--azul);
+    background: #1d4ed8;
     color: white;
     width: 38px;
     height: 38px;
@@ -62,45 +70,47 @@ st.markdown("""
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 19px;
 }
 
 .titulo-paso {
     font-size: 23px;
-    font-weight: 700;
-    color: var(--texto);
+    font-weight: 800;
+    color: #111827;
 }
 
 .tarjeta {
-    border: 1px solid #dbe3ef;
-    background: white;
-    border-radius: 16px;
+    border: 1px solid var(--gris-borde);
+    background: #ffffff;
+    border-radius: 14px;
     padding: 18px;
     margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .tarjeta-azul {
-    border: 1px solid var(--borde-azul);
-    background: var(--azul-suave);
-    border-radius: 14px;
+    border: 1px solid var(--azul-borde);
+    background: var(--azul-claro);
+    color: #0f172a;
+    border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
 }
 
 .tarjeta-verde {
-    border: 1px solid #bbf7d0;
-    background: #f0fdf4;
-    border-radius: 14px;
+    border: 1px solid #86efac;
+    background: var(--verde-claro);
+    color: #0f172a;
+    border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
 }
 
 .tarjeta-naranja {
-    border: 1px solid #fed7aa;
-    background: #fff7ed;
-    border-radius: 14px;
+    border: 1px solid #fdba74;
+    background: var(--naranja-claro);
+    color: #0f172a;
+    border-radius: 12px;
     padding: 12px 16px;
     margin: 12px 0;
 }
@@ -112,29 +122,30 @@ st.markdown("""
 }
 
 .metric-box {
-    border: 1px solid var(--borde-azul);
-    background: #f8fbff;
-    border-radius: 16px;
+    border: 1px solid var(--azul-borde);
+    background: #ffffff;
+    border-radius: 14px;
     padding: 14px;
     text-align: center;
 }
 
 .metric-title {
     font-size: 15px;
-    color: #334155;
+    color: #111827;
 }
 
 .metric-number {
     font-size: 42px;
     font-weight: 800;
-    color: var(--azul);
+    color: #1d4ed8;
     line-height: 1.1;
 }
 
 .grupo-titulo {
-    font-weight: 700;
+    font-weight: 800;
     text-align: center;
     margin-bottom: 6px;
+    color: #111827;
 }
 
 .grupo-objetos {
@@ -146,7 +157,7 @@ st.markdown("""
 .grupo-cantidad {
     text-align: center;
     margin-top: 8px;
-    color: #334155;
+    color: #111827;
 }
 
 .division-box {
@@ -159,7 +170,7 @@ st.markdown("""
     font-family: 'Courier New', monospace;
     font-size: 42px;
     line-height: 1.25;
-    color: #0f172a;
+    color: #111827;
 }
 
 .fila-superior,
@@ -173,48 +184,48 @@ st.markdown("""
 
 .divisor {
     text-align: center;
-    color: #2563eb;
-    font-weight: 700;
+    color: #1d4ed8;
+    font-weight: 800;
 }
 
 .dividendo {
-    border-left: 5px solid #0f172a;
-    border-bottom: 5px solid #0f172a;
+    border-left: 5px solid #111827;
+    border-bottom: 5px solid #111827;
     padding-left: 18px;
     text-align: center;
-    color: #f97316;
-    font-weight: 700;
+    color: #c2410c;
+    font-weight: 800;
 }
 
 .cociente {
-    border-bottom: 5px solid #0f172a;
+    border-bottom: 5px solid #111827;
     padding-left: 18px;
     text-align: center;
-    color: #16a34a;
-    font-weight: 700;
+    color: #15803d;
+    font-weight: 800;
 }
 
 .resta {
     text-align: center;
-    border-bottom: 4px solid #0f172a;
-    color: #16a34a;
-    font-weight: 700;
+    border-bottom: 4px solid #111827;
+    color: #15803d;
+    font-weight: 800;
 }
 
 .resto {
     text-align: center;
-    color: #f97316;
-    font-weight: 700;
+    color: #c2410c;
+    font-weight: 800;
 }
 
 .etiqueta {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 800;
 }
 
-.azul { color: #2563eb; }
-.verde { color: #16a34a; }
-.naranja { color: #f97316; }
+.azul { color: #1d4ed8; font-weight: 800; }
+.verde { color: #15803d; font-weight: 800; }
+.naranja { color: #c2410c; font-weight: 800; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -312,7 +323,6 @@ st.markdown(
 # -----------------------------
 paso(3, "Así quedaron los objetos")
 
-# Organiza grupos en columnas de forma estable
 cols_por_fila = 4
 for inicio in range(0, cantidad_grupos, cols_por_fila):
     cols = st.columns(cols_por_fila)
@@ -353,7 +363,7 @@ else:
 paso(4, "Respondé estas preguntas antes de mirar la cuenta")
 
 st.markdown(
-    f"""
+    """
     <div class="tarjeta">
     <ol>
         <li>¿Cuántos objetos hay en cada grupo?</li>
@@ -432,7 +442,7 @@ if mostrar_igualdad:
     st.markdown(
         f"""
         <div class="tarjeta">
-            <div style="font-size:42px; text-align:center; font-weight:700;">
+            <div style="font-size:42px; text-align:center; font-weight:800; color:#111827;">
                 <span class="naranja">{total}</span>
                 =
                 <span class="azul">{cantidad_grupos}</span>
@@ -441,7 +451,7 @@ if mostrar_igualdad:
                 +
                 <span class="naranja">{sin_repartir}</span>
             </div>
-            <div style="text-align:center; margin-top:10px;">
+            <div style="text-align:center; margin-top:10px; color:#111827;">
                 <span class="naranja">dividendo</span> ·
                 <span class="azul">divisor</span> ·
                 <span class="verde">cociente</span> ·
