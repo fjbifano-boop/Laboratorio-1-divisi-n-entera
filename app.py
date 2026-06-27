@@ -7,21 +7,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# -----------------------------
-# Funciones auxiliares
-# -----------------------------
-
 def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
-    """
-    Dibuja la cuenta de dividir en formato escolar.
-    Usa matplotlib para evitar problemas de HTML, SVG o fuentes faltantes.
-    """
     fig, ax = plt.subplots(figsize=(8, 4.6), dpi=150)
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 7)
     ax.axis("off")
 
-    # Colores de alto contraste
     negro = "#111111"
     azul = "#0057D9"
     verde = "#137A2A"
@@ -29,7 +20,6 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     rojo = "#C00000"
     gris = "#DDDDDD"
 
-    # Fondo blanco con borde
     rect = plt.Rectangle(
         (0.2, 0.2), 9.6, 6.6,
         linewidth=2,
@@ -38,11 +28,9 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     )
     ax.add_patch(rect)
 
-    # Posiciones
-    x_izq = 3.3
-    x_der = 6.4
+    x_izq = 3.4
+    x_der = 6.3
 
-    # Estructura tipo galera escolar: dividendo | divisor ; abajo producto | cociente
     ax.text(x_izq, 5.2, str(dividendo), fontsize=40, fontweight="bold",
             ha="center", va="center", color=naranja)
 
@@ -50,7 +38,7 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
             ha="center", va="center", color=azul)
 
     ax.plot([4.8, 4.8], [2.0, 6.1], color=negro, linewidth=4)
-    ax.plot([4.8, 7.6], [4.4, 4.4], color=negro, linewidth=4)
+    ax.plot([4.8, 7.55], [4.4, 4.4], color=negro, linewidth=4)
 
     ax.text(x_der, 3.4, str(cociente), fontsize=40, fontweight="bold",
             ha="center", va="center", color=verde)
@@ -58,15 +46,14 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     ax.text(x_izq, 3.4, f"−{producto}", fontsize=34, fontweight="bold",
             ha="center", va="center", color=verde)
 
-    ax.plot([2.3, 4.3], [2.65, 2.65], color=negro, linewidth=3)
+    ax.plot([2.35, 4.35], [2.65, 2.65], color=negro, linewidth=3)
 
     ax.text(x_izq, 1.7, str(resto), fontsize=40, fontweight="bold",
             ha="center", va="center", color=rojo)
 
-    # Etiquetas claras y grandes
     ax.annotate(
         "Dividendo",
-        xy=(x_izq - 0.35, 5.2), xytext=(1.0, 5.2),
+        xy=(x_izq - 0.45, 5.2), xytext=(0.85, 5.2),
         fontsize=16, fontweight="bold", color=naranja,
         arrowprops=dict(arrowstyle="->", lw=2.5, color=naranja),
         ha="left", va="center"
@@ -74,7 +61,7 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 
     ax.annotate(
         "Divisor",
-        xy=(x_der + 0.05, 5.2), xytext=(8.0, 5.2),
+        xy=(x_der + 0.25, 5.2), xytext=(7.85, 5.2),
         fontsize=16, fontweight="bold", color=azul,
         arrowprops=dict(arrowstyle="->", lw=2.5, color=azul),
         ha="left", va="center"
@@ -82,7 +69,7 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 
     ax.annotate(
         "Cociente",
-        xy=(x_der + 0.05, 3.4), xytext=(8.0, 3.4),
+        xy=(x_der + 0.25, 3.4), xytext=(7.85, 3.4),
         fontsize=16, fontweight="bold", color=verde,
         arrowprops=dict(arrowstyle="->", lw=2.5, color=verde),
         ha="left", va="center"
@@ -90,7 +77,7 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 
     ax.annotate(
         "Resto",
-        xy=(x_izq + 0.25, 1.7), xytext=(4.5, 1.1),
+        xy=(x_izq + 0.20, 1.7), xytext=(4.75, 1.15),
         fontsize=16, fontweight="bold", color=rojo,
         arrowprops=dict(arrowstyle="->", lw=2.5, color=rojo),
         ha="left", va="center"
@@ -98,8 +85,8 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 
     ax.text(
         5, 0.55,
-        f"{dividendo} objetos repartidos en {divisor} grupos: {cociente} en cada grupo y {resto} sin repartir",
-        fontsize=13,
+        f"Al repartir {dividendo} objetos en {divisor} grupos iguales, quedan {cociente} objetos en cada grupo y quedan {resto} objetos sin repartir.",
+        fontsize=12,
         ha="center",
         va="center",
         color=negro
@@ -115,10 +102,6 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 def mostrar_paso(numero, titulo):
     st.markdown(f"### {numero}. {titulo}")
 
-
-# -----------------------------
-# App
-# -----------------------------
 
 st.title("LIM · Laboratorio de división")
 st.write("Exploramos cómo repartir objetos en grupos iguales.")
@@ -140,7 +123,9 @@ objetos_por_grupo = total // cantidad_grupos
 sin_repartir = total % cantidad_grupos
 producto = cantidad_grupos * objetos_por_grupo
 
-st.info(f"La aplicación reparte los {total} objetos en {cantidad_grupos} grupos iguales, siempre que sea posible.")
+st.info(
+    f"La aplicación reparte los {total} objetos en {cantidad_grupos} grupos iguales, siempre que sea posible."
+)
 
 st.divider()
 
@@ -179,7 +164,7 @@ mostrar_paso(5, "Miramos la cuenta de dividir")
 mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
 
 if mostrar_cuenta:
-    st.write("La cuenta muestra la misma organización que vimos con los objetos.")
+    st.write("La cuenta representa el mismo reparto que observamos con los objetos.")
 
     imagen_cuenta = dibujar_cuenta(
         dividendo=total,
@@ -201,10 +186,22 @@ if mostrar_cuenta:
 
 st.divider()
 
-mostrar_paso(6, "Relacionamos con la escritura matemática")
+mostrar_paso(6, "Relacionamos con la expresión matemática")
 
-mostrar_igualdad = st.checkbox("Mostrar la escritura matemática")
+mostrar_expresion = st.checkbox("Mostrar la expresión matemática")
 
-if mostrar_igualdad:
+if mostrar_expresion:
     st.markdown(f"## {total} = {cantidad_grupos} × {objetos_por_grupo} + {sin_repartir}")
-    st.write("Esta escritura resume lo que se vio con los objetos y con la cuenta.")
+
+    st.markdown(f"""
+La expresión matemática también representa el mismo reparto:
+
+- **{total}** es el **dividendo**: la cantidad total de objetos.
+- **{cantidad_grupos}** es el **divisor**: la cantidad de grupos.
+- **{objetos_por_grupo}** es el **cociente**: la cantidad de objetos en cada grupo.
+- **{sin_repartir}** es el **resto**: la cantidad de objetos que quedaron sin repartir.
+
+En palabras:
+
+**Al repartir {total} objetos en {cantidad_grupos} grupos iguales, quedan {objetos_por_grupo} objetos en cada grupo y quedan {sin_repartir} objetos sin repartir.**
+""")
