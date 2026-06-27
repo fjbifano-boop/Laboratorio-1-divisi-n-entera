@@ -14,11 +14,50 @@ def buscar_organizacion_rectangular(n):
             mejor_filas, mejor_columnas = filas, n // filas
     return mejor_filas, mejor_columnas
 
-def representar_objetos_en_grupo(n):
-    if n == 0:
-        return "Todavía no recibió objetos."
+def dibujar_objetos_rectangulares(n, color="#2F80ED"):
+    """
+    Dibuja n objetos como cuadrados del mismo tamaño.
+    Si n admite una organización rectangular, la prioriza.
+    """
     filas, columnas = buscar_organizacion_rectangular(n)
-    return "\n".join(["🟦 " * columnas for _ in range(filas)])
+
+    if n == 0:
+        fig, ax = plt.subplots(figsize=(2, 0.8), dpi=150)
+        ax.axis("off")
+        ax.text(0.5, 0.5, "Sin objetos", ha="center", va="center", fontsize=12)
+    else:
+        lado = 1
+        margen = 0.35
+        separacion = 0.25
+
+        ancho = columnas * lado + (columnas - 1) * separacion + 2 * margen
+        alto = filas * lado + (filas - 1) * separacion + 2 * margen
+
+        fig, ax = plt.subplots(figsize=(max(2.0, ancho * 0.55), max(1.3, alto * 0.55)), dpi=150)
+        ax.set_xlim(0, ancho)
+        ax.set_ylim(0, alto)
+        ax.axis("off")
+        ax.set_aspect("equal")
+
+        for f in range(filas):
+            for c in range(columnas):
+                x = margen + c * (lado + separacion)
+                y = alto - margen - lado - f * (lado + separacion)
+                cuadrado = plt.Rectangle(
+                    (x, y),
+                    lado,
+                    lado,
+                    facecolor=color,
+                    edgecolor="#1E40AF" if color == "#2F80ED" else "#C2410C",
+                    linewidth=1.5
+                )
+                ax.add_patch(cuadrado)
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", bbox_inches="tight", pad_inches=0.08, transparent=True)
+    plt.close(fig)
+    buffer.seek(0)
+    return buffer
 
 def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     fig, ax = plt.subplots(figsize=(8, 4.6), dpi=150)
@@ -146,13 +185,16 @@ for i in range(cantidad_grupos):
     with st.container(border=True):
         st.write(f"Grupo {i + 1}")
         if objetos_por_grupo > 0:
-            st.markdown("### " + representar_objetos_en_grupo(objetos_por_grupo).replace("\n", "  \n"))
+            imagen_grupo = dibujar_objetos_rectangulares(objetos_por_grupo, color="#2F80ED")
+            st.image(imagen_grupo, width=220)
             st.write(f"{objetos_por_grupo} objetos")
         else:
             st.write("Todavía no recibió objetos.")
 
 if sin_repartir > 0:
-    st.warning(f"Objetos que todavía no se repartieron: {'🟨 ' * sin_repartir}")
+    st.warning("Objetos que todavía no se repartieron:")
+    imagen_sin_repartir = dibujar_objetos_rectangulares(sin_repartir, color="#F97316")
+    st.image(imagen_sin_repartir, width=220)
 else:
     st.success("Todos los objetos quedaron repartidos en los grupos.")
 
