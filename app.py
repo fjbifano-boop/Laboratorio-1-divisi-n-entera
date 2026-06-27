@@ -1,215 +1,453 @@
 import streamlit as st
 
-st.set_page_config(page_title="Explorador de divisiones", layout="centered")
-
-st.title("🧩 Explorador de divisiones")
-
-st.write(
-    "Primero elegimos una cantidad de objetos. Después decidimos en cuántos grupos repartirlos."
+st.set_page_config(
+    page_title="LIM - Laboratorio de división",
+    layout="wide"
 )
+
+# -----------------------------
+# Estilos generales
+# -----------------------------
+st.markdown("""
+<style>
+:root {
+    --azul: #2563eb;
+    --azul-suave: #eff6ff;
+    --borde-azul: #bfdbfe;
+    --verde: #16a34a;
+    --naranja: #f97316;
+    --gris: #f8fafc;
+    --texto: #0f172a;
+}
+
+.block-container {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+    max-width: 1150px;
+}
+
+.header-lim {
+    background: linear-gradient(90deg, #0f172a, #1e3a8a);
+    color: white;
+    padding: 18px 24px;
+    border-radius: 18px;
+    margin-bottom: 24px;
+}
+
+.header-lim h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.header-lim p {
+    margin: 4px 0 0 0;
+    font-size: 17px;
+    opacity: 0.9;
+}
+
+.paso {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.numero-paso {
+    background: var(--azul);
+    color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 19px;
+}
+
+.titulo-paso {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--texto);
+}
+
+.tarjeta {
+    border: 1px solid #dbe3ef;
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.tarjeta-azul {
+    border: 1px solid var(--borde-azul);
+    background: var(--azul-suave);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+
+.tarjeta-verde {
+    border: 1px solid #bbf7d0;
+    background: #f0fdf4;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+
+.tarjeta-naranja {
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin: 12px 0;
+}
+
+.objetos {
+    font-size: 27px;
+    line-height: 1.75;
+    word-wrap: break-word;
+}
+
+.metric-box {
+    border: 1px solid var(--borde-azul);
+    background: #f8fbff;
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+}
+
+.metric-title {
+    font-size: 15px;
+    color: #334155;
+}
+
+.metric-number {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--azul);
+    line-height: 1.1;
+}
+
+.grupo-titulo {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.grupo-objetos {
+    font-size: 25px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.grupo-cantidad {
+    text-align: center;
+    margin-top: 8px;
+    color: #334155;
+}
+
+.division-box {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.division-escolar {
+    font-family: 'Courier New', monospace;
+    font-size: 42px;
+    line-height: 1.25;
+    color: #0f172a;
+}
+
+.fila-superior,
+.fila-principal,
+.fila-resta,
+.fila-resto {
+    display: grid;
+    grid-template-columns: 110px 32px 110px;
+    align-items: center;
+}
+
+.divisor {
+    text-align: center;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.dividendo {
+    border-left: 5px solid #0f172a;
+    border-bottom: 5px solid #0f172a;
+    padding-left: 18px;
+    text-align: center;
+    color: #f97316;
+    font-weight: 700;
+}
+
+.cociente {
+    border-bottom: 5px solid #0f172a;
+    padding-left: 18px;
+    text-align: center;
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.resta {
+    text-align: center;
+    border-bottom: 4px solid #0f172a;
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.resto {
+    text-align: center;
+    color: #f97316;
+    font-weight: 700;
+}
+
+.etiqueta {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.azul { color: #2563eb; }
+.verde { color: #16a34a; }
+.naranja { color: #f97316; }
+
+</style>
+""", unsafe_allow_html=True)
+
+
+def paso(numero, titulo):
+    st.markdown(
+        f"""
+        <div class="paso">
+            <div class="numero-paso">{numero}</div>
+            <div class="titulo-paso">{titulo}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# -----------------------------
+# Encabezado
+# -----------------------------
+st.markdown("""
+<div class="header-lim">
+    <h1>LIM · Laboratorio de división</h1>
+    <p>Exploramos cómo repartir objetos en grupos iguales</p>
+</div>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # Paso 1
 # -----------------------------
-st.subheader("1. Elegí la cantidad de objetos")
+paso(1, "Elegí la cantidad de objetos")
 
-total = st.slider("Cantidad de objetos", 1, 80, 26)
+col1, col2 = st.columns([4, 1])
 
-st.write("Objetos disponibles:")
-st.markdown("### " + "🟦 " * total)
+with col1:
+    total = st.slider("Cantidad de objetos", 1, 80, 37)
 
-st.divider()
+with col2:
+    st.markdown(
+        f"""
+        <div class="metric-box">
+            <div class="metric-title">Total de objetos</div>
+            <div class="metric-number">{total}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown(
+    f"""
+    <div class="tarjeta">
+        <div class="objetos">{'🟦 ' * total}</div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    "<div class='tarjeta-azul'>Usá el deslizador para cambiar la cantidad de objetos.</div>",
+    unsafe_allow_html=True
+)
 
 # -----------------------------
 # Paso 2
 # -----------------------------
-st.subheader("2. Elegí cuántos grupos querés formar")
+paso(2, "Elegí cuántos grupos iguales querés formar")
 
-cantidad_grupos = st.slider("Cantidad de grupos", 1, 12, 3)
+col1, col2 = st.columns([4, 1])
+
+with col1:
+    cantidad_grupos = st.slider("Cantidad de grupos", 1, 12, 5)
+
+with col2:
+    st.markdown(
+        f"""
+        <div class="metric-box">
+            <div class="metric-title">Total de grupos</div>
+            <div class="metric-number">{cantidad_grupos}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 objetos_por_grupo = total // cantidad_grupos
 sin_repartir = total % cantidad_grupos
+producto = cantidad_grupos * objetos_por_grupo
 
-st.write("La aplicación reparte los objetos en grupos iguales siempre que sea posible.")
-
-for i in range(cantidad_grupos):
-    with st.container(border=True):
-        st.write(f"Grupo {i + 1}")
-        if objetos_por_grupo > 0:
-            st.markdown("### " + "🟦 " * objetos_por_grupo)
-        else:
-            st.write("Todavía no recibió objetos.")
-
-if sin_repartir > 0:
-    with st.container(border=True):
-        st.write("Objetos que todavía no se repartieron")
-        st.markdown("### " + "🟨 " * sin_repartir)
-else:
-    st.success("Todos los objetos quedaron repartidos en los grupos.")
-
-st.divider()
+st.markdown(
+    f"<div class='tarjeta-azul'>La aplicación reparte los objetos en {cantidad_grupos} grupos iguales, siempre que sea posible.</div>",
+    unsafe_allow_html=True
+)
 
 # -----------------------------
 # Paso 3
 # -----------------------------
-st.subheader("3. Pensá antes de mirar la cuenta")
+paso(3, "Así quedaron los objetos")
 
-st.markdown(f"""
-Con esta organización:
+# Organiza grupos en columnas de forma estable
+cols_por_fila = 4
+for inicio in range(0, cantidad_grupos, cols_por_fila):
+    cols = st.columns(cols_por_fila)
+    for j in range(cols_por_fila):
+        idx = inicio + j
+        if idx < cantidad_grupos:
+            with cols[j]:
+                with st.container(border=True):
+                    st.markdown(f"<div class='grupo-titulo'>Grupo {idx + 1}</div>", unsafe_allow_html=True)
+                    if objetos_por_grupo > 0:
+                        st.markdown(
+                            f"<div class='grupo-objetos'>{'🟦 ' * objetos_por_grupo}</div>",
+                            unsafe_allow_html=True
+                        )
+                        st.markdown(
+                            f"<div class='grupo-cantidad'>{objetos_por_grupo} objetos</div>",
+                            unsafe_allow_html=True
+                        )
+                    else:
+                        st.markdown("<div class='grupo-cantidad'>Todavía no recibió objetos.</div>", unsafe_allow_html=True)
 
-- Hay **{cantidad_grupos} grupos**.
-- En cada grupo quedaron **{objetos_por_grupo} objetos**.
-- Quedaron **{sin_repartir} objetos** sin repartir.
-
-Antes de seguir, respondé con tus palabras:
-
-1. ¿Cómo sabés cuántos objetos quedaron en cada grupo?
-2. ¿Por qué los objetos amarillos no se repartieron?
-3. ¿Qué tendría que pasar para que todos los grupos reciban un objeto más?
-4. Mové la cantidad de objetos. ¿Qué cambia?
-5. Mové la cantidad de grupos. ¿Qué cambia?
-""")
-
-st.divider()
+if sin_repartir > 0:
+    st.markdown(
+        f"""
+        <div class="tarjeta-naranja">
+            <b>Objetos que todavía no se repartieron:</b>
+            <span style="font-size:26px; margin-left:14px;">{'🟨 ' * sin_repartir}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown("<div class='tarjeta-verde'>Todos los objetos quedaron repartidos en los grupos.</div>", unsafe_allow_html=True)
 
 # -----------------------------
 # Paso 4
 # -----------------------------
-st.subheader("4. Cuenta de dividir")
+paso(4, "Respondé estas preguntas antes de mirar la cuenta")
 
-mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
-
-if mostrar_cuenta:
-    producto = cantidad_grupos * objetos_por_grupo
-
-    st.markdown("La cuenta organiza la misma información que vimos con los objetos.")
-
-    # Cuenta en formato escolar aproximado, usando HTML/CSS simple.
-    st.markdown(f"""
-<style>
-.division-box {{
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}}
-.division-escolar {{
-    font-family: 'Courier New', monospace;
-    font-size: 34px;
-    line-height: 1.25;
-    color: inherit;
-}}
-.fila-superior {{
-    display: grid;
-    grid-template-columns: 95px 28px 95px;
-    align-items: end;
-}}
-.fila-principal {{
-    display: grid;
-    grid-template-columns: 95px 28px 95px;
-    align-items: center;
-}}
-.fila-resta {{
-    display: grid;
-    grid-template-columns: 95px 28px 95px;
-    align-items: center;
-}}
-.fila-resto {{
-    display: grid;
-    grid-template-columns: 95px 28px 95px;
-    align-items: center;
-}}
-.numero {{
-    text-align: center;
-}}
-.divisor {{
-    text-align: center;
-}}
-.dividendo {{
-    border-left: 4px solid currentColor;
-    border-bottom: 4px solid currentColor;
-    padding-left: 14px;
-    text-align: center;
-}}
-.cociente {{
-    border-bottom: 4px solid currentColor;
-    padding-left: 14px;
-    text-align: center;
-}}
-.resta {{
-    text-align: center;
-    border-bottom: 3px solid currentColor;
-}}
-.resto {{
-    text-align: center;
-}}
-.nombre {{
-    font-size: 15px;
-    font-family: sans-serif;
-    opacity: 0.85;
-    text-align: center;
-    margin-top: 4px;
-}}
-</style>
-
-<div class="division-box">
-  <div>
-    <div class="division-escolar">
-      <div class="fila-superior">
-        <div></div>
-        <div></div>
-        <div class="cociente">{objetos_por_grupo}</div>
-      </div>
-      <div class="fila-principal">
-        <div class="divisor">{cantidad_grupos}</div>
-        <div></div>
-        <div class="dividendo">{total}</div>
-      </div>
-      <div class="fila-resta">
-        <div></div>
-        <div></div>
-        <div class="resta">−{producto}</div>
-      </div>
-      <div class="fila-resto">
-        <div></div>
-        <div></div>
-        <div class="resto">{sin_repartir}</div>
-      </div>
+st.markdown(
+    f"""
+    <div class="tarjeta">
+    <ol>
+        <li>¿Cuántos objetos hay en cada grupo?</li>
+        <li>¿Cuántos grupos se formaron?</li>
+        <li>¿Cuántos objetos no se pudieron repartir?</li>
+        <li>¿Qué tendría que pasar para que cada grupo recibiera un objeto más?</li>
+        <li>Mové la cantidad de objetos o la cantidad de grupos. ¿Qué cambia?</li>
+    </ol>
     </div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-    st.markdown(f"""
-En esta cuenta:
-
-- **{total}** es la cantidad total de objetos. Se llama **dividendo**.
-- **{cantidad_grupos}** es la cantidad de grupos entre los que se reparte. Se llama **divisor**.
-- **{objetos_por_grupo}** es la cantidad que queda en cada grupo. Se llama **cociente**.
-- **{sin_repartir}** es la cantidad que queda sin repartir. Se llama **resto**.
-- **{producto}** es la cantidad de objetos que sí pudieron repartirse en partes iguales.
-""")
-
-st.divider()
+    """,
+    unsafe_allow_html=True
+)
 
 # -----------------------------
 # Paso 5
 # -----------------------------
-st.subheader("5. Escritura matemática")
+paso(5, "Miramos la cuenta de dividir")
+
+mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
+
+if mostrar_cuenta:
+    col_a, col_b = st.columns([1, 1.4])
+
+    with col_a:
+        st.markdown(
+            f"""
+            <div class="tarjeta">
+                <p>La cuenta muestra cómo se reparten los <b>{total}</b> objetos en <b>{cantidad_grupos}</b> grupos.</p>
+                <p><span class="etiqueta naranja">{total}</span> → dividendo: cantidad total de objetos.</p>
+                <p><span class="etiqueta azul">{cantidad_grupos}</span> → divisor: cantidad de grupos.</p>
+                <p><span class="etiqueta verde">{objetos_por_grupo}</span> → cociente: objetos en cada grupo.</p>
+                <p><span class="etiqueta naranja">{sin_repartir}</span> → resto: objetos que no se pudieron repartir.</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col_b:
+        st.markdown(f"""
+        <div class="tarjeta">
+            <div class="division-box">
+              <div class="division-escolar">
+                <div class="fila-superior">
+                  <div></div>
+                  <div></div>
+                  <div class="cociente">{objetos_por_grupo}</div>
+                </div>
+                <div class="fila-principal">
+                  <div class="divisor">{cantidad_grupos}</div>
+                  <div></div>
+                  <div class="dividendo">{total}</div>
+                </div>
+                <div class="fila-resta">
+                  <div></div>
+                  <div></div>
+                  <div class="resta">−{producto}</div>
+                </div>
+                <div class="fila-resto">
+                  <div></div>
+                  <div></div>
+                  <div class="resto">{sin_repartir}</div>
+                </div>
+              </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# -----------------------------
+# Paso 6
+# -----------------------------
+paso(6, "Relacionamos con la escritura matemática")
 
 mostrar_igualdad = st.checkbox("Mostrar la escritura matemática")
 
 if mostrar_igualdad:
-    st.markdown(f"### {total} = {cantidad_grupos} × {objetos_por_grupo} + {sin_repartir}")
-
-    st.markdown(f"""
-Esta escritura resume lo que se vio antes:
-
-- Se formaron **{cantidad_grupos} grupos**.
-- Cada grupo recibió **{objetos_por_grupo} objetos**.
-- Quedaron **{sin_repartir} objetos** sin repartir.
-
-Por eso:
-
-**{total} = {cantidad_grupos} × {objetos_por_grupo} + {sin_repartir}**
-""")
+    st.markdown(
+        f"""
+        <div class="tarjeta">
+            <div style="font-size:42px; text-align:center; font-weight:700;">
+                <span class="naranja">{total}</span>
+                =
+                <span class="azul">{cantidad_grupos}</span>
+                ×
+                <span class="verde">{objetos_por_grupo}</span>
+                +
+                <span class="naranja">{sin_repartir}</span>
+            </div>
+            <div style="text-align:center; margin-top:10px;">
+                <span class="naranja">dividendo</span> ·
+                <span class="azul">divisor</span> ·
+                <span class="verde">cociente</span> ·
+                <span class="naranja">resto</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
