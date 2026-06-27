@@ -82,15 +82,103 @@ mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
 if mostrar_cuenta:
     producto = cantidad_grupos * objetos_por_grupo
 
-    cuenta = f"""
-             {objetos_por_grupo}
-          _______
-{cantidad_grupos}   )   {total}
-          {producto}
-          -------
-             {sin_repartir}
-"""
-    st.code(cuenta, language="text")
+    st.markdown("La cuenta organiza la misma información que vimos con los objetos.")
+
+    # Cuenta en formato escolar aproximado, usando HTML/CSS simple.
+    st.markdown(f"""
+<style>
+.division-box {{
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}}
+.division-escolar {{
+    font-family: 'Courier New', monospace;
+    font-size: 34px;
+    line-height: 1.25;
+    color: inherit;
+}}
+.fila-superior {{
+    display: grid;
+    grid-template-columns: 95px 28px 95px;
+    align-items: end;
+}}
+.fila-principal {{
+    display: grid;
+    grid-template-columns: 95px 28px 95px;
+    align-items: center;
+}}
+.fila-resta {{
+    display: grid;
+    grid-template-columns: 95px 28px 95px;
+    align-items: center;
+}}
+.fila-resto {{
+    display: grid;
+    grid-template-columns: 95px 28px 95px;
+    align-items: center;
+}}
+.numero {{
+    text-align: center;
+}}
+.divisor {{
+    text-align: center;
+}}
+.dividendo {{
+    border-left: 4px solid currentColor;
+    border-bottom: 4px solid currentColor;
+    padding-left: 14px;
+    text-align: center;
+}}
+.cociente {{
+    border-bottom: 4px solid currentColor;
+    padding-left: 14px;
+    text-align: center;
+}}
+.resta {{
+    text-align: center;
+    border-bottom: 3px solid currentColor;
+}}
+.resto {{
+    text-align: center;
+}}
+.nombre {{
+    font-size: 15px;
+    font-family: sans-serif;
+    opacity: 0.85;
+    text-align: center;
+    margin-top: 4px;
+}}
+</style>
+
+<div class="division-box">
+  <div>
+    <div class="division-escolar">
+      <div class="fila-superior">
+        <div></div>
+        <div></div>
+        <div class="cociente">{objetos_por_grupo}</div>
+      </div>
+      <div class="fila-principal">
+        <div class="divisor">{cantidad_grupos}</div>
+        <div></div>
+        <div class="dividendo">{total}</div>
+      </div>
+      <div class="fila-resta">
+        <div></div>
+        <div></div>
+        <div class="resta">−{producto}</div>
+      </div>
+      <div class="fila-resto">
+        <div></div>
+        <div></div>
+        <div class="resto">{sin_repartir}</div>
+      </div>
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown(f"""
 En esta cuenta:
