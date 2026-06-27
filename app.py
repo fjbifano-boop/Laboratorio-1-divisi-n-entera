@@ -5,15 +5,14 @@ st.set_page_config(page_title="Explorador de divisiones", layout="centered")
 st.title("🧩 Explorador de divisiones")
 
 st.write(
-    "Mové los controles o usá los botones para observar qué ocurre con los grupos, "
-    "el cociente y el resto."
+    "Mové los controles o usá los botones para explorar cómo se forman grupos."
 )
 
-# Valor inicial guardado
+# Conserva el valor elegido aunque se actualice la pantalla
 if "total" not in st.session_state:
     st.session_state.total = 37
 
-grupo = st.slider("¿Cuántos objetos forman cada grupo?", 1, 20, 5)
+grupo = st.slider("¿Cuántos objetos tiene cada grupo?", 1, 20, 5)
 
 st.write("Cantidad de objetos")
 
@@ -26,7 +25,7 @@ with col_b1:
 
 with col_b2:
     st.session_state.total = st.slider(
-        "¿Cuántos objetos hay?",
+        "Cantidad de objetos",
         1,
         100,
         st.session_state.total,
@@ -39,57 +38,89 @@ with col_b3:
             st.session_state.total += 1
 
 total = st.session_state.total
-
-cociente = total // grupo
-resto = total % grupo
+grupos_completos = total // grupo
+sin_agrupar = total % grupo
+faltan = 0 if sin_agrupar == 0 else grupo - sin_agrupar
 
 st.divider()
 
-st.subheader("Representación")
+st.subheader("Lo que se ve")
 
-for _ in range(cociente):
+for _ in range(grupos_completos):
     st.write("🟦 " * grupo)
 
-if resto > 0:
-    st.write("**Sobran:**")
-    st.write("🟨 " * resto)
+if sin_agrupar > 0:
+    st.write("🟨 " * sin_agrupar + "⬜ " * faltan)
 else:
-    st.success("No sobra ningún objeto.")
+    st.success("Todos los objetos quedaron en grupos completos.")
+
+st.caption(
+    "🟦 objetos en grupos completos · 🟨 objetos que todavía no forman un grupo completo · ⬜ lugares que faltan para completar otro grupo"
+)
 
 st.divider()
 
-mostrar_igualdad = st.checkbox("Mostrar la igualdad de la división")
+st.subheader("Observá")
+
+if sin_agrupar == 0:
+    st.info("Se completaron todos los grupos. ¿Qué pasa si agregás 1 objeto?")
+elif sin_agrupar == grupo - 1:
+    st.info("Falta sólo 1 objeto para completar otro grupo. ¿Qué pensás que pasará si lo agregás?")
+else:
+    st.info(f"Faltan {faltan} objetos para completar otro grupo.")
+
+st.divider()
+
+mostrar_igualdad = st.checkbox("Mostrar la escritura matemática")
 
 if mostrar_igualdad:
     st.subheader("Escritura matemática")
 
-    st.markdown(f"### {total} = {grupo} × {cociente} + {resto}")
+    st.markdown(f"### {total} = {grupo} × {grupos_completos} + {sin_agrupar}")
 
-    col1, col2 = st.columns(2)
+    st.markdown(f"""
+En esta escritura:
 
-    with col1:
-        st.metric("Grupos completos", cociente)
-
-    with col2:
-        st.metric("Objetos que sobran", resto)
+- **{total}** es la cantidad total de objetos. En la división se llama **dividendo**.
+- **{grupo}** es la cantidad de objetos que tiene cada grupo. En la división se llama **divisor**.
+- **{grupos_completos}** es la cantidad de grupos completos. En la división se llama **cociente**.
+- **{sin_agrupar}** es la cantidad de objetos que no alcanzan para formar otro grupo completo. En la división se llama **resto**.
+""")
 
 st.divider()
 
-st.subheader("¿Qué podés investigar?")
+mostrar_cuenta = st.checkbox("Mostrar la cuenta de dividir")
 
-if resto == 0:
-    st.info("✔ El resto es 0. Se completó un grupo. ¿Qué ocurrió con el cociente?")
-elif resto == grupo - 1:
-    st.info("🤔 Sólo falta un objeto para formar otro grupo completo. ¿Qué pensás que pasará si agregás 1?")
-else:
-    st.info(f"🤔 Faltan {grupo-resto} objetos para completar otro grupo.")
+if mostrar_cuenta:
+    producto = grupo * grupos_completos
+
+    st.subheader("Cuenta de dividir")
+
+    cuenta = f"""
+          {grupos_completos}
+       ______
+{grupo}  )  {total}
+       {producto}
+       ------
+          {sin_agrupar}
+"""
+
+    st.code(cuenta, language="text")
+
+    st.markdown(f"""
+En la cuenta:
+
+- **{producto}** representa los objetos que sí pudieron organizarse en grupos completos.
+- **{total} - {producto} = {sin_agrupar}** muestra los objetos que no alcanzan para formar otro grupo completo.
+""")
+
+st.divider()
+
+st.subheader("Desafíos")
 
 st.markdown("""
-### Desafíos
-
-1. Dejá fijo el tamaño del grupo y usá varias veces el botón **Agregar 1**.
-2. Observá qué pasa con el resto.
-3. ¿Cuándo vuelve a aparecer resto 0?
-4. ¿Qué ocurre con el cociente justo en ese momento?
-5. ¿Puede el resto ser igual al tamaño del grupo?
+1. Dejá fijo el tamaño de los grupos y agregá objetos de a uno.
+2. Observá cuándo se completa un nuevo grupo.
+3. Antes de mostrar la escritura matemática, explicá con tus palabras qué está pasando.
+4. Después activá la escritura matemática y buscá dónde aparece cada parte.
 """)
