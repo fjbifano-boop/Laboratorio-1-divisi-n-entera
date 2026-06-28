@@ -205,7 +205,7 @@ mostrar_paso(4, "Respondé estas preguntas antes de mirar la cuenta")
 st.markdown("""
 1. ¿Cuántos objetos hay en cada grupo?
 2. ¿Cuántos grupos se formaron?
-3. ¿Cuántos objetos no se pudieron repartir?
+3. ¿Quedaron objetos sin repartir? ¿Qué número representa esa cantidad?
 4. ¿Qué tendría que pasar para que cada grupo recibiera un objeto más?
 5. Mové la cantidad de objetos o la cantidad de grupos de a uno. ¿Qué cambia?
 """)
