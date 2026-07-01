@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import math
 
-st.set_page_config(page_title="LIM - Laboratorio de división", layout="centered")
+# Reemplazar cuando estén disponibles
+FORMULARIO_COMENTARIOS_URL = ""
+DOCUMENTO_LIM_URL = ""
+
+st.set_page_config(page_title="LIM - Explorando la división entera", layout="centered")
 
 def buscar_organizacion_rectangular(n):
     if n <= 0:
@@ -116,8 +120,9 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
 def mostrar_paso(numero, titulo):
     st.markdown(f"### {numero}. {titulo}")
 
-st.title("LIM · Laboratorio de división")
-st.write("Exploramos cómo repartir objetos en grupos iguales.")
+st.title("Explorando la división entera")
+st.subheader("Repartir en grupos iguales")
+st.write("Exploramos cómo repartir objetos completos en grupos iguales.")
 
 st.info(
     "Este laboratorio trabaja con división entera: buscamos repartir objetos completos en grupos iguales. "
@@ -133,35 +138,17 @@ st.markdown("### " + "🟦 " * total)
 
 st.divider()
 
-mostrar_paso(2, "Elegí cuántos grupos iguales querés formar")
+mostrar_paso(2, "Elegí en cuántos grupos iguales querés repartir")
 
-if "cantidad_grupos" not in st.session_state:
-    st.session_state.cantidad_grupos = 5
+cantidad_grupos = st.slider("Cantidad de grupos", 1, 12, 5, step=1)
 
-col_menos, col_slider, col_mas = st.columns([1, 5, 1])
-
-with col_menos:
-    if st.button("➖ 1 grupo"):
-        st.session_state.cantidad_grupos = max(1, st.session_state.cantidad_grupos - 1)
-
-with col_slider:
-    st.session_state.cantidad_grupos = st.slider(
-        "Cantidad de grupos", 1, 12, st.session_state.cantidad_grupos, step=1
-    )
-
-with col_mas:
-    if st.button("➕ 1 grupo"):
-        st.session_state.cantidad_grupos = min(12, st.session_state.cantidad_grupos + 1)
-
-cantidad_grupos = st.session_state.cantidad_grupos
-
-st.write(f"Cantidad de grupos: **{cantidad_grupos}**")
+st.write(f"Se formarán **{cantidad_grupos} grupos iguales**.")
 
 objetos_por_grupo = total // cantidad_grupos
 sin_repartir = total % cantidad_grupos
 producto = cantidad_grupos * objetos_por_grupo
 
-st.info(f"La aplicación reparte los {total} objetos en {cantidad_grupos} grupos iguales, siempre que sea posible.")
+st.info(f"Con esta elección, los {total} objetos se repartirán en {cantidad_grupos} grupos iguales, siempre que sea posible.")
 
 if total < cantidad_grupos:
     st.warning(
@@ -264,3 +251,24 @@ En palabras:
 
 **Al repartir {total} objetos en {cantidad_grupos} grupos iguales, quedan {objetos_por_grupo} objetos en cada grupo y quedan {sin_repartir} objetos sin repartir.**
 """)
+
+
+st.divider()
+
+st.markdown("### Sobre este laboratorio")
+st.markdown(
+    "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
+    "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
+)
+st.markdown("**Versión:** 1.0 (prototipo de circulación)")
+st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
+
+if FORMULARIO_COMENTARIOS_URL:
+    st.link_button("💬 Enviar un comentario o sugerencia", FORMULARIO_COMENTARIOS_URL)
+else:
+    st.caption("Próximamente: formulario para enviar comentarios o sugerencias.")
+
+if DOCUMENTO_LIM_URL:
+    st.link_button("📄 ¿Qué es LIM?", DOCUMENTO_LIM_URL)
+else:
+    st.caption("Próximamente: documento breve de presentación del proyecto LIM.")
