@@ -124,9 +124,26 @@ st.divider()
 
 mostrar_paso(2, "Elegí en cuántos grupos iguales querés repartir")
 
-cantidad_grupos = st.slider("Cantidad de grupos", 1, 12, 5, step=1)
+if "cantidad_grupos" not in st.session_state:
+    st.session_state.cantidad_grupos = 5
 
-st.write(f"Se formarán **{cantidad_grupos} grupos iguales**.")
+col_menos, col_valor, col_mas = st.columns([1, 2, 1])
+
+with col_menos:
+    if st.button("− 1 grupo"):
+        st.session_state.cantidad_grupos = max(1, st.session_state.cantidad_grupos - 1)
+
+with col_valor:
+    st.markdown(
+        f"<h3 style='text-align:center;'>Se formarán {st.session_state.cantidad_grupos} grupos iguales</h3>",
+        unsafe_allow_html=True
+    )
+
+with col_mas:
+    if st.button("+ 1 grupo"):
+        st.session_state.cantidad_grupos = min(12, st.session_state.cantidad_grupos + 1)
+
+cantidad_grupos = st.session_state.cantidad_grupos
 
 objetos_por_grupo = total // cantidad_grupos
 sin_repartir = total % cantidad_grupos
@@ -182,7 +199,7 @@ st.markdown("""
 2. ¿Cuántos grupos se formaron?
 3. ¿Quedaron objetos sin repartir? ¿Qué número representa esa cantidad?
 4. ¿Qué tendría que pasar para que cada grupo recibiera un objeto más?
-5. Mové la cantidad de objetos o la cantidad de grupos de a uno. ¿Qué cambia?
+5. Cambiá la cantidad de objetos o la cantidad de grupos de a uno. ¿Qué cambia?
 """)
 
 st.subheader("Para pensar: lo que queda sin repartir y la cantidad de grupos")
@@ -248,7 +265,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.3 (prototipo de circulación)")
+st.markdown("**Versión:** 1.4 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
