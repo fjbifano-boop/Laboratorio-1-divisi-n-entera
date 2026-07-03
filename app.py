@@ -1,27 +1,53 @@
-import streamlit as st
-import matplotlib.pyplot as plt
-from io import BytesIO
 import math
+from io import BytesIO
+
+import matplotlib.pyplot as plt
+import streamlit as st
+
+# -----------------------------
+# Configuración general
+# -----------------------------
+st.set_page_config(
+    page_title="LIM - Explorando la división entera",
+    layout="wide"
+)
 
 # Reemplazar cuando estén disponibles
 FORMULARIO_COMENTARIOS_URL = ""
 DOCUMENTO_LIM_URL = ""
 
-st.set_page_config(page_title="LIM - Explorando la división entera", layout="wide")
+MAX_GRUPOS = 12
+
+
+# -----------------------------
+# Estado de la aplicación
+# -----------------------------
+if "cantidad_grupos" not in st.session_state:
+    st.session_state.cantidad_grupos = 5
+
+
+def disminuir_grupos():
+    st.session_state.cantidad_grupos = max(1, st.session_state.cantidad_grupos - 1)
+
+
+def aumentar_grupos():
+    st.session_state.cantidad_grupos = min(MAX_GRUPOS, st.session_state.cantidad_grupos + 1)
+
 
 # -----------------------------
 # Estilo visual
 # -----------------------------
-st.markdown("""
+st.markdown(
+    """
 <style>
 .block-container {
-    max-width: 1200px;
+    max-width: 1220px;
     padding-top: 1.2rem;
     padding-bottom: 2rem;
 }
 
 [data-testid="stAppViewContainer"] {
-    background: radial-gradient(circle at top left, #142033 0%, #0b111c 38%, #070b12 100%);
+    background: radial-gradient(circle at top left, #152238 0%, #0b111c 42%, #070b12 100%);
     color: #f8fafc;
 }
 
@@ -29,13 +55,16 @@ st.markdown("""
     background: rgba(0,0,0,0);
 }
 
+h1, h2, h3, p, li, span, div {
+    color: #f8fafc;
+}
+
 .lim-topbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid rgba(148, 163, 184, 0.45);
     padding-bottom: 14px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
 .lim-code {
@@ -51,35 +80,12 @@ st.markdown("""
     margin-left: 12px;
 }
 
-.lim-top-left {
-    display: flex;
-    align-items: center;
-}
-
-.lim-step-title {
-    font-size: 34px;
-    font-weight: 800;
+.step-title {
+    font-size: 32px;
+    font-weight: 850;
     color: #ffffff;
-    margin: 18px 0 18px 0;
-}
-
-.control-row {
-    display: grid;
-    grid-template-columns: 190px 1fr 190px;
-    gap: 26px;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.control-button {
-    border: 1px solid rgba(148, 163, 184, 0.55);
-    border-radius: 10px;
-    padding: 14px;
-    text-align: center;
-    font-size: 19px;
-    font-weight: 700;
-    color: #ffffff;
-    background: rgba(15, 23, 42, 0.85);
+    margin-top: 24px;
+    margin-bottom: 18px;
 }
 
 .group-value {
@@ -87,22 +93,23 @@ st.markdown("""
     font-size: 30px;
     font-weight: 800;
     color: #ffffff;
+    line-height: 1.25;
 }
 
 .group-number {
     color: #2f80ed;
-    font-size: 56px;
-    font-weight: 900;
-    padding: 0 10px;
+    font-size: 58px;
+    font-weight: 950;
+    padding: 0 12px;
 }
 
 .info-card {
-    border: 1px solid rgba(47, 128, 237, 0.5);
+    border: 1px solid rgba(47, 128, 237, 0.55);
     background: rgba(14, 71, 125, 0.38);
     border-radius: 10px;
-    padding: 20px 24px;
+    padding: 18px 22px;
     color: #dbeafe;
-    font-size: 20px;
+    font-size: 19px;
     margin: 18px 0;
 }
 
@@ -120,14 +127,14 @@ st.markdown("""
     background: rgba(15, 23, 42, 0.58);
     border-radius: 12px;
     padding: 18px;
-    margin: 20px 0;
+    margin: 18px 0;
 }
 
 .summary-box {
     border-radius: 10px;
     padding: 12px;
     text-align: center;
-    background: rgba(2, 6, 23, 0.32);
+    background: rgba(2, 6, 23, 0.36);
 }
 
 .box-blue { border: 1px solid #2f80ed; }
@@ -149,55 +156,44 @@ st.markdown("""
 .green { color: #47d147; }
 .yellow { color: #f2b705; }
 .red { color: #ef4444; }
-.op { color: #ffffff; font-size: 32px; font-weight: 800; text-align: center; }
+
+.op {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+}
 
 .board {
     border: 1px solid rgba(148, 163, 184, 0.35);
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15, 23, 42, 0.50);
     border-radius: 12px;
-    padding: 22px;
+    padding: 20px;
     margin-top: 18px;
-}
-
-.board-grid {
-    display: grid;
-    grid-template-columns: 2fr 0.03fr 1fr;
-    gap: 24px;
-    align-items: start;
-}
-
-.divider-vertical {
-    border-left: 1px dashed rgba(203, 213, 225, 0.55);
-    min-height: 220px;
 }
 
 .board-title {
     color: #ffffff;
     font-size: 24px;
-    font-weight: 800;
+    font-weight: 850;
     margin-bottom: 14px;
 }
 
-.groups-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(145px, 1fr));
-    gap: 16px;
-}
-
 .group-card {
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    background: rgba(2, 6, 23, 0.35);
+    border: 1px solid rgba(148, 163, 184, 0.38);
+    background: rgba(2, 6, 23, 0.38);
     border-radius: 10px;
     padding: 12px;
     text-align: center;
     overflow-x: auto;
-    min-height: 86px;
+    min-height: 92px;
+    margin-bottom: 14px;
 }
 
 .group-title {
     color: #ffffff;
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 750;
     margin-bottom: 10px;
 }
 
@@ -218,6 +214,7 @@ st.markdown("""
     width: 22px;
     height: 22px;
     border-radius: 3px;
+    flex: 0 0 auto;
 }
 
 .square-blue {
@@ -230,19 +227,11 @@ st.markdown("""
     border: 2px solid #b91c1c;
 }
 
-.remainder-zone {
-    text-align: center;
-}
-
-.remainder-objects {
-    margin-top: 55px;
-}
-
 .explain-card {
-    border: 1px solid rgba(47, 128, 237, 0.5);
+    border: 1px solid rgba(47, 128, 237, 0.50);
     background: rgba(14, 71, 125, 0.34);
     border-radius: 10px;
-    padding: 18px 24px;
+    padding: 18px 22px;
     margin-top: 18px;
     color: #ffffff;
     font-size: 20px;
@@ -262,47 +251,51 @@ st.markdown("""
     margin-top: 12px;
 }
 
-.light-section {
+.section-card {
     background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    border: 1px solid rgba(148, 163, 184, 0.28);
     border-radius: 12px;
     padding: 20px;
     margin-top: 22px;
 }
 
-.light-section h3, .light-section p, .light-section li {
-    color: #f8fafc;
-}
-
 button[kind="secondary"] {
     border: 1px solid rgba(148, 163, 184, 0.55);
-    background-color: rgba(15, 23, 42, 0.85);
+    background-color: rgba(15, 23, 42, 0.88);
     color: #ffffff;
 }
-
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True
+)
 
 
 # -----------------------------
-# Funciones auxiliares
+# Funciones matemáticas y visuales
 # -----------------------------
-def buscar_organizacion_rectangular(n):
+def buscar_organizacion_rectangular(n: int) -> tuple[int, int]:
     if n <= 0:
         return (0, 0)
-    mejor_filas, mejor_columnas = 1, n
+
+    mejor_filas = 1
+    mejor_columnas = n
+
     for filas in range(1, int(math.sqrt(n)) + 1):
         if n % filas == 0:
-            mejor_filas, mejor_columnas = filas, n // filas
-    return mejor_filas, mejor_columnas
+            mejor_filas = filas
+            mejor_columnas = n // filas
+
+    return (mejor_filas, mejor_columnas)
 
 
-def objetos_html(n, color="blue"):
+def objetos_html(n: int, color: str = "blue") -> str:
     filas, columnas = buscar_organizacion_rectangular(n)
+
     if n == 0:
         return "<span style='color:#cbd5e1;'>Sin objetos</span>"
 
     square_class = "square-blue" if color == "blue" else "square-red"
+
     html = "<div class='objects'>"
     for _ in range(filas):
         html += "<div class='object-row'>"
@@ -313,7 +306,7 @@ def objetos_html(n, color="blue"):
     return html
 
 
-def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
+def dibujar_cuenta(dividendo: int, divisor: int, cociente: int, producto: int, resto: int) -> BytesIO:
     fig, ax = plt.subplots(figsize=(8, 4.6), dpi=150)
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 7)
@@ -358,7 +351,10 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     ax.text(
         5, 0.55,
         f"Al repartir {dividendo} objetos en {divisor} grupos iguales, quedan {cociente} objetos en cada grupo y quedan {resto} objetos sin repartir.",
-        fontsize=12, ha="center", va="center", color=negro
+        fontsize=12,
+        ha="center",
+        va="center",
+        color=negro
     )
 
     buffer = BytesIO()
@@ -368,24 +364,92 @@ def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     return buffer
 
 
-# -----------------------------
-# Estado
-# -----------------------------
-if "cantidad_grupos" not in st.session_state:
-    st.session_state.cantidad_grupos = 5
+def render_topbar():
+    st.markdown(
+        """
+        <div class="lim-topbar">
+            <span class="lim-code">DE-01</span>
+            <span style="color:#94a3b8; margin-left:12px;">|</span>
+            <span class="lim-title">Explorar la división entera: repartir en grupos iguales</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def render_step_title(number: int, text: str):
+    st.markdown(f"<div class='step-title'>{number}. {text}</div>", unsafe_allow_html=True)
+
+
+def render_summary(total: int, grupos: int, por_grupo: int, resto: int):
+    st.markdown(
+        f"""
+        <div class="summary-card">
+            <div class="summary-box box-blue">
+                <div class="summary-label">Objetos totales</div>
+                <div class="summary-num blue">{total}</div>
+            </div>
+            <div class="op">=</div>
+            <div class="summary-box box-green">
+                <div class="summary-label">En cada grupo</div>
+                <div class="summary-num green">{por_grupo}</div>
+            </div>
+            <div class="op">×</div>
+            <div class="summary-box box-yellow">
+                <div class="summary-label">Cantidad de grupos</div>
+                <div class="summary-num yellow">{grupos}</div>
+            </div>
+            <div class="op">+</div>
+            <div class="summary-box box-red">
+                <div class="summary-label">Resto</div>
+                <div class="summary-num red">{resto}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def render_groups(grupos: int, por_grupo: int):
+    st.markdown(f"<div class='board-title'>Grupos formados ({grupos} grupos de {por_grupo})</div>", unsafe_allow_html=True)
+
+    cols_por_fila = 4
+    for inicio in range(0, grupos, cols_por_fila):
+        columnas = st.columns(cols_por_fila)
+        for j, col in enumerate(columnas):
+            idx = inicio + j
+            if idx < grupos:
+                with col:
+                    st.markdown(
+                        f"""
+                        <div class="group-card">
+                            <div class="group-title">Grupo {idx + 1}</div>
+                            {objetos_html(por_grupo, color="blue")}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+
+def render_remainder(resto: int):
+    st.markdown("<div class='board-title'>Quedan sin repartir</div>", unsafe_allow_html=True)
+    if resto > 0:
+        st.markdown(
+            f"""
+            <div class="group-card" style="max-width:420px;">
+                {objetos_html(resto, color="red")}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.success("No quedaron objetos sin repartir.")
+
 
 # -----------------------------
-# Encabezado
+# Interfaz
 # -----------------------------
-st.markdown("""
-<div class="lim-topbar">
-    <div class="lim-top-left">
-        <span class="lim-code">DE-01</span>
-        <span style="color:#94a3b8; margin-left:12px;">|</span>
-        <span class="lim-title">Explorar la división entera: repartir en grupos iguales</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+render_topbar()
 
 st.title("Explorando la división entera")
 st.subheader("Repartir en grupos iguales")
@@ -398,26 +462,20 @@ st.info(
 
 st.divider()
 
-# -----------------------------
-# Paso 1
-# -----------------------------
-st.markdown("<div class='lim-step-title'>1. Elegí la cantidad de objetos</div>", unsafe_allow_html=True)
+# 1. Cantidad de objetos
+render_step_title(1, "Elegí la cantidad de objetos")
 total = st.slider("Cantidad de objetos", 1, 80, 37, step=1)
 
-# -----------------------------
-# Paso 2
-# -----------------------------
-st.markdown("<div class='lim-step-title'>2. Elegí en cuántos grupos iguales querés repartir</div>", unsafe_allow_html=True)
+# 2. Cantidad de grupos
+render_step_title(2, "Elegí en cuántos grupos iguales querés repartir")
 
 col_menos, col_valor, col_mas = st.columns([1, 2.6, 1])
 
 with col_menos:
-    if st.button("←  − 1 grupo", use_container_width=True):
-        st.session_state.cantidad_grupos = max(1, st.session_state.cantidad_grupos - 1)
+    st.button("←  − 1 grupo", on_click=disminuir_grupos, use_container_width=True)
 
 with col_mas:
-    if st.button("+ 1 grupo  →", use_container_width=True):
-        st.session_state.cantidad_grupos = min(12, st.session_state.cantidad_grupos + 1)
+    st.button("+ 1 grupo  →", on_click=aumentar_grupos, use_container_width=True)
 
 cantidad_grupos = st.session_state.cantidad_grupos
 objetos_por_grupo = total // cantidad_grupos
@@ -447,95 +505,46 @@ if total < cantidad_grupos:
         "En otro tipo de problema se podrían partir los objetos y usar fracciones, pero este laboratorio se concentra en la división entera."
     )
 
-# -----------------------------
-# Resumen visual
-# -----------------------------
-st.markdown(
-    f"""
-    <div class="summary-card">
-        <div class="summary-box box-blue">
-            <div class="summary-label">Objetos totales</div>
-            <div class="summary-num blue">{total}</div>
-        </div>
-        <div class="op">=</div>
-        <div class="summary-box box-green">
-            <div class="summary-label">En cada grupo</div>
-            <div class="summary-num green">{objetos_por_grupo}</div>
-        </div>
-        <div class="op">×</div>
-        <div class="summary-box box-yellow">
-            <div class="summary-label">Cantidad de grupos</div>
-            <div class="summary-num yellow">{cantidad_grupos}</div>
-        </div>
-        <div class="op">+</div>
-        <div class="summary-box box-red">
-            <div class="summary-label">Resto</div>
-            <div class="summary-num red">{sin_repartir}</div>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# 3. Observamos el reparto
+render_step_title(3, "Observamos el reparto")
 
-# -----------------------------
-# Paso 3 visual integrado
-# -----------------------------
-st.markdown("<div class='board-title'>Grupos formados</div>", unsafe_allow_html=True)
+st.markdown("<div class='board'>", unsafe_allow_html=True)
+col_grupos, col_resto = st.columns([2.2, 1])
+with col_grupos:
+    render_groups(cantidad_grupos, objetos_por_grupo)
+with col_resto:
+    render_remainder(sin_repartir)
+st.markdown("</div>", unsafe_allow_html=True)
 
-cols_por_fila = 4
-for inicio in range(0, cantidad_grupos, cols_por_fila):
-    columnas = st.columns(cols_por_fila)
-    for j, col in enumerate(columnas):
-        idx = inicio + j
-        if idx < cantidad_grupos:
-            with col:
-                st.markdown(
-                    f"""
-                    <div class="group-card">
-                        <div class="group-title">Grupo {idx + 1}</div>
-                        {objetos_html(objetos_por_grupo, color="blue")}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-if sin_repartir > 0:
-    st.markdown("<div class='board-title'>Quedan sin repartir</div>", unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div class="group-card" style="max-width:420px;">
-            {objetos_html(sin_repartir, color="red")}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-else:
-    st.success("No quedaron objetos sin repartir.")
+# 4. ¿Qué está pasando?
+render_step_title(4, "¿Qué está pasando?")
 
 st.markdown(
     f"""
     <div class="explain-card">
-        <div class="explain-title">¿Qué está pasando?</div>
+        <div class="explain-title">Miramos el reparto</div>
         <div>
             Se formaron <span class="blue"><b>{cantidad_grupos}</b></span> grupos de
-            <span class="green"><b>{objetos_por_grupo}</b></span> objetos cada uno:
-            <span class="green"><b>{cantidad_grupos} × {objetos_por_grupo} = {producto}</b></span>.
-            Quedan <span class="red"><b>{sin_repartir}</b></span> objetos sin repartir.
+            <span class="green"><b>{objetos_por_grupo}</b></span> objetos cada uno.
+            En total se pudieron repartir <span class="green"><b>{producto}</b></span> objetos.
+            Quedaron <span class="red"><b>{sin_repartir}</b></span> objetos sin repartir.
         </div>
-        <div class="small-note">Probá con otro número de grupos para ver cómo cambia el reparto.</div>
+        <div class="small-note">Antes de seguir, comprobá que esta descripción coincide con lo que observás.</div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# -----------------------------
-# Preguntas y representaciones
-# -----------------------------
-st.markdown("<div class='light-section'>", unsafe_allow_html=True)
-st.markdown("### Respondé estas preguntas antes de mirar la cuenta")
-st.markdown("""
+# 5. Representación matemática
+render_step_title(5, "Lo representamos matemáticamente")
+st.write("Esta es una forma de escribir el reparto que acabamos de observar:")
+render_summary(total, cantidad_grupos, objetos_por_grupo, sin_repartir)
+
+# 6. Preguntas
+render_step_title(6, "Respondé estas preguntas antes de mirar la cuenta")
+
+with st.container(border=True):
+    st.markdown("""
 1. ¿Cuántos objetos hay en cada grupo?
 2. ¿Cuántos grupos se formaron?
 3. ¿Quedaron objetos sin repartir? ¿Qué número representa esa cantidad?
@@ -543,8 +552,8 @@ st.markdown("""
 5. Cambiá la cantidad de objetos o la cantidad de grupos de a uno. ¿Qué cambia?
 """)
 
-st.markdown("### Para pensar: lo que queda sin repartir y la cantidad de grupos")
-st.markdown(f"""
+    st.markdown("#### Para pensar: lo que queda sin repartir y la cantidad de grupos")
+    st.markdown(f"""
 Ahora quedaron **{sin_repartir} objetos sin repartir** y hay **{cantidad_grupos} grupos**.
 
 Probá mover los controles y pensá:
@@ -554,36 +563,39 @@ Probá mover los controles y pensá:
 - ¿Qué pasaría si quedaran sin repartir tantos objetos como grupos hay?
 """)
 
-if st.checkbox("Mostrar una ayuda sobre esta relación"):
-    st.info(
-        "Si quedaran sin repartir tantos objetos como grupos hay, podríamos darle 1 objeto más a cada grupo. "
-        "Por eso, en la división entera, la cantidad que queda sin repartir siempre es menor que la cantidad de grupos."
-    )
-st.markdown("</div>", unsafe_allow_html=True)
+    if st.checkbox("Mostrar una ayuda sobre esta relación"):
+        st.info(
+            "Si quedaran sin repartir tantos objetos como grupos hay, podríamos darle 1 objeto más a cada grupo. "
+            "Por eso, en la división entera, la cantidad que queda sin repartir siempre es menor que la cantidad de grupos."
+        )
 
-st.markdown("<div class='light-section'>", unsafe_allow_html=True)
-st.markdown("### Miramos la cuenta de dividir")
+# 7. Cuenta
+render_step_title(7, "Miramos la cuenta de dividir")
 
-if st.checkbox("Mostrar la cuenta de dividir"):
-    st.write("La cuenta representa el mismo reparto que observamos con los objetos.")
-    st.image(dibujar_cuenta(total, cantidad_grupos, objetos_por_grupo, producto, sin_repartir), use_container_width=True)
+with st.container(border=True):
+    if st.checkbox("Mostrar la cuenta de dividir"):
+        st.write("La cuenta representa el mismo reparto que observamos con los objetos.")
+        st.image(
+            dibujar_cuenta(total, cantidad_grupos, objetos_por_grupo, producto, sin_repartir),
+            use_container_width=True
+        )
 
-    st.markdown(f"""
+        st.markdown(f"""
 - **{total}** es la cantidad total de objetos. Se llama **dividendo**.
 - **{cantidad_grupos}** es la cantidad de grupos. Se llama **divisor**.
 - **{objetos_por_grupo}** es la cantidad de objetos en cada grupo. Se llama **cociente**.
 - **{sin_repartir}** es la cantidad de objetos que no se pudieron repartir. Se llama **resto**.
 - **{producto}** es la cantidad de objetos que sí pudieron repartirse en partes iguales.
 """)
-st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='light-section'>", unsafe_allow_html=True)
-st.markdown("### Relacionamos con la expresión matemática")
+# 8. Expresión matemática
+render_step_title(8, "Relacionamos la cuenta con la expresión matemática")
 
-if st.checkbox("Mostrar la expresión matemática"):
-    st.markdown(f"## {total} = {cantidad_grupos} × {objetos_por_grupo} + {sin_repartir}")
+with st.container(border=True):
+    if st.checkbox("Mostrar la expresión matemática"):
+        st.markdown(f"## {total} = {cantidad_grupos} × {objetos_por_grupo} + {sin_repartir}")
 
-    st.markdown(f"""
+        st.markdown(f"""
 La expresión matemática también representa el mismo reparto:
 
 - **{total}** es el **dividendo**: la cantidad total de objetos.
@@ -595,7 +607,6 @@ En palabras:
 
 **Al repartir {total} objetos en {cantidad_grupos} grupos iguales, quedan {objetos_por_grupo} objetos en cada grupo y quedan {sin_repartir} objetos sin repartir.**
 """)
-st.markdown("</div>", unsafe_allow_html=True)
 
 st.divider()
 
@@ -604,7 +615,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.6 (prototipo de circulación)")
+st.markdown("**Versión:** 1.7 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
