@@ -190,6 +190,8 @@ st.markdown("""
     border-radius: 10px;
     padding: 12px;
     text-align: center;
+    overflow-x: auto;
+    min-height: 86px;
 }
 
 .group-title {
@@ -478,46 +480,51 @@ st.markdown(
 # -----------------------------
 # Paso 3 visual integrado
 # -----------------------------
-group_cards = ""
-for i in range(cantidad_grupos):
-    group_cards += f"""
-    <div class="group-card">
-        <div class="group-title">Grupo {i + 1}</div>
-        {objetos_html(objetos_por_grupo, color="blue")}
-    </div>
-    """
+st.markdown("<div class='board-title'>Grupos formados</div>", unsafe_allow_html=True)
 
-remainder_html = objetos_html(sin_repartir, color="red") if sin_repartir > 0 else "<span style='color:#86efac; font-weight:800;'>No quedaron objetos sin repartir.</span>"
+cols_por_fila = 4
+for inicio in range(0, cantidad_grupos, cols_por_fila):
+    columnas = st.columns(cols_por_fila)
+    for j, col in enumerate(columnas):
+        idx = inicio + j
+        if idx < cantidad_grupos:
+            with col:
+                st.markdown(
+                    f"""
+                    <div class="group-card">
+                        <div class="group-title">Grupo {idx + 1}</div>
+                        {objetos_html(objetos_por_grupo, color="blue")}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+if sin_repartir > 0:
+    st.markdown("<div class='board-title'>Quedan sin repartir</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="group-card" style="max-width:420px;">
+            {objetos_html(sin_repartir, color="red")}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.success("No quedaron objetos sin repartir.")
 
 st.markdown(
     f"""
-    <div class="board">
-        <div class="board-grid">
-            <div>
-                <div class="board-title">Grupos formados ({cantidad_grupos} grupos de {objetos_por_grupo})</div>
-                <div class="groups-grid">
-                    {group_cards}
-                </div>
-            </div>
-            <div class="divider-vertical"></div>
-            <div class="remainder-zone">
-                <div class="board-title">Quedan sin repartir</div>
-                <div class="remainder-objects">
-                    {remainder_html}
-                </div>
-            </div>
+    <div class="explain-card">
+        <div class="explain-title">¿Qué está pasando?</div>
+        <div>
+            Se formaron <span class="blue"><b>{cantidad_grupos}</b></span> grupos de
+            <span class="green"><b>{objetos_por_grupo}</b></span> objetos cada uno:
+            <span class="green"><b>{cantidad_grupos} × {objetos_por_grupo} = {producto}</b></span>.
+            Quedan <span class="red"><b>{sin_repartir}</b></span> objetos sin repartir.
         </div>
-
-        <div class="explain-card">
-            <div class="explain-title">¿Qué está pasando?</div>
-            <div>
-                Se formaron <span class="blue"><b>{cantidad_grupos}</b></span> grupos de
-                <span class="green"><b>{objetos_por_grupo}</b></span> objetos cada uno:
-                <span class="green"><b>{cantidad_grupos} × {objetos_por_grupo} = {producto}</b></span>.
-                Quedan <span class="red"><b>{sin_repartir}</b></span> objetos sin repartir.
-            </div>
-            <div class="small-note">Probá con otro número de grupos para ver cómo cambia el reparto.</div>
-        </div>
+        <div class="small-note">Probá con otro número de grupos para ver cómo cambia el reparto.</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -597,7 +604,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.5 (prototipo de circulación)")
+st.markdown("**Versión:** 1.6 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
