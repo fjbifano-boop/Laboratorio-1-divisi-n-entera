@@ -2,7 +2,6 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from io import BytesIO
 import math
-from PIL import Image, ImageDraw
 
 # Reemplazar cuando estén disponibles
 FORMULARIO_COMENTARIOS_URL = ""
@@ -19,52 +18,33 @@ def buscar_organizacion_rectangular(n):
             mejor_filas, mejor_columnas = filas, n // filas
     return mejor_filas, mejor_columnas
 
-def dibujar_objetos_rectangulares(n, color="#2F80ED"):
+def render_objetos_rectangulares(n, color="#2F80ED"):
     """
-    Dibuja n objetos como cuadrados de tamaño fijo.
-
-    Decisión de diseño:
-    un objeto debe conservar siempre el mismo tamaño visual,
-    tanto si está dentro de un grupo como si quedó sin repartir.
-    Por eso el tamaño del cuadrado no depende de la cantidad de objetos.
+    Representa n objetos como cuadrados HTML de tamaño fijo.
+    Esta opción evita que Streamlit reescale imágenes de distinto tamaño.
     """
     filas, columnas = buscar_organizacion_rectangular(n)
 
-    square = 22
-    gap = 5
-    margin = 8
-
     if n == 0:
-        img = Image.new("RGBA", (150, 42), (255, 255, 255, 0))
-        draw = ImageDraw.Draw(img)
-        draw.text((10, 10), "Sin objetos", fill=(40, 40, 40, 255))
-    else:
-        width = margin * 2 + columnas * square + max(0, columnas - 1) * gap
-        height = margin * 2 + filas * square + max(0, filas - 1) * gap
-        img = Image.new("RGBA", (width, height), (255, 255, 255, 0))
-        draw = ImageDraw.Draw(img)
+        return "<span>Sin objetos</span>"
 
-        fill = color
-        outline = "#1E40AF" if color == "#2F80ED" else "#C2410C"
+    borde = "#1E40AF" if color == "#2F80ED" else "#C2410C"
 
-        for f in range(filas):
-            for c in range(columnas):
-                x0 = margin + c * (square + gap)
-                y0 = margin + f * (square + gap)
-                x1 = x0 + square
-                y1 = y0 + square
-                draw.rounded_rectangle(
-                    [x0, y0, x1, y1],
-                    radius=3,
-                    fill=fill,
-                    outline=outline,
-                    width=2
-                )
+    html = """
+    <div style="display:inline-flex; flex-direction:column; gap:5px; align-items:flex-start;">
+    """
 
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
-    return buffer
+    for _ in range(filas):
+        html += '<div style="display:flex; gap:5px;">'
+        for _ in range(columnas):
+            html += (
+                f'<span style="display:inline-block; width:22px; height:22px; '
+                f'background:{color}; border:2px solid {borde}; border-radius:3px;"></span>'
+            )
+        html += "</div>"
+
+    html += "</div>"
+    return html
 
 
 def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
@@ -264,7 +244,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.1 (prototipo de circulación)")
+st.markdown("**Versión:** 1.2 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
