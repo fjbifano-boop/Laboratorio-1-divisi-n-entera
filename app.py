@@ -156,16 +156,20 @@ for i in range(cantidad_grupos):
     with st.container(border=True):
         st.write(f"Grupo {i + 1}")
         if objetos_por_grupo > 0:
-            imagen_grupo = dibujar_objetos_rectangulares(objetos_por_grupo, color="#2F80ED")
-            st.image(imagen_grupo, width=220)
+            st.markdown(
+                render_objetos_rectangulares(objetos_por_grupo, color="#2F80ED"),
+                unsafe_allow_html=True
+            )
             st.write(f"{objetos_por_grupo} objetos")
         else:
             st.write("Todavía no recibió objetos.")
 
 if sin_repartir > 0:
     st.warning("Objetos que todavía no se repartieron:")
-    imagen_sin_repartir = dibujar_objetos_rectangulares(sin_repartir, color="#F97316")
-    st.image(imagen_sin_repartir, width=220)
+    st.markdown(
+        render_objetos_rectangulares(sin_repartir, color="#F97316"),
+        unsafe_allow_html=True
+    )
 else:
     st.success("Todos los objetos quedaron repartidos en los grupos.")
 
@@ -244,7 +248,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.2 (prototipo de circulación)")
+st.markdown("**Versión:** 1.3 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
