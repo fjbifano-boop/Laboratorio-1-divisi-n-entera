@@ -2,6 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from io import BytesIO
 import math
+from PIL import Image, ImageDraw
 
 # Reemplazar cuando estén disponibles
 FORMULARIO_COMENTARIOS_URL = ""
@@ -20,48 +21,51 @@ def buscar_organizacion_rectangular(n):
 
 def dibujar_objetos_rectangulares(n, color="#2F80ED"):
     """
-    Dibuja n objetos como cuadrados del mismo tamaño.
-    Si n admite una organización rectangular, la prioriza.
+    Dibuja n objetos como cuadrados de tamaño fijo.
+
+    Decisión de diseño:
+    un objeto debe conservar siempre el mismo tamaño visual,
+    tanto si está dentro de un grupo como si quedó sin repartir.
+    Por eso el tamaño del cuadrado no depende de la cantidad de objetos.
     """
     filas, columnas = buscar_organizacion_rectangular(n)
 
+    square = 22
+    gap = 5
+    margin = 8
+
     if n == 0:
-        fig, ax = plt.subplots(figsize=(2, 0.8), dpi=150)
-        ax.axis("off")
-        ax.text(0.5, 0.5, "Sin objetos", ha="center", va="center", fontsize=12)
+        img = Image.new("RGBA", (150, 42), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
+        draw.text((10, 10), "Sin objetos", fill=(40, 40, 40, 255))
     else:
-        lado = 1
-        margen = 0.35
-        separacion = 0.25
+        width = margin * 2 + columnas * square + max(0, columnas - 1) * gap
+        height = margin * 2 + filas * square + max(0, filas - 1) * gap
+        img = Image.new("RGBA", (width, height), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
 
-        ancho = columnas * lado + (columnas - 1) * separacion + 2 * margen
-        alto = filas * lado + (filas - 1) * separacion + 2 * margen
-
-        fig, ax = plt.subplots(figsize=(max(2.0, ancho * 0.55), max(1.3, alto * 0.55)), dpi=150)
-        ax.set_xlim(0, ancho)
-        ax.set_ylim(0, alto)
-        ax.axis("off")
-        ax.set_aspect("equal")
+        fill = color
+        outline = "#1E40AF" if color == "#2F80ED" else "#C2410C"
 
         for f in range(filas):
             for c in range(columnas):
-                x = margen + c * (lado + separacion)
-                y = alto - margen - lado - f * (lado + separacion)
-                cuadrado = plt.Rectangle(
-                    (x, y),
-                    lado,
-                    lado,
-                    facecolor=color,
-                    edgecolor="#1E40AF" if color == "#2F80ED" else "#C2410C",
-                    linewidth=1.5
+                x0 = margin + c * (square + gap)
+                y0 = margin + f * (square + gap)
+                x1 = x0 + square
+                y1 = y0 + square
+                draw.rounded_rectangle(
+                    [x0, y0, x1, y1],
+                    radius=3,
+                    fill=fill,
+                    outline=outline,
+                    width=2
                 )
-                ax.add_patch(cuadrado)
 
     buffer = BytesIO()
-    fig.savefig(buffer, format="png", bbox_inches="tight", pad_inches=0.08, transparent=True)
-    plt.close(fig)
+    img.save(buffer, format="PNG")
     buffer.seek(0)
     return buffer
+
 
 def dibujar_cuenta(dividendo, divisor, cociente, producto, resto):
     fig, ax = plt.subplots(figsize=(8, 4.6), dpi=150)
@@ -260,7 +264,7 @@ st.markdown(
     "**Explorando la división entera: repartir en grupos iguales** forma parte de **LIM (Laboratorio de Ideas Matemáticas)**, "
     "un proyecto de investigación y desarrollo dedicado al diseño de laboratorios para explorar ideas matemáticas."
 )
-st.markdown("**Versión:** 1.0 (prototipo de circulación)")
+st.markdown("**Versión:** 1.1 (prototipo de circulación)")
 st.markdown("Este laboratorio continúa en desarrollo. Tus comentarios nos ayudan a mejorarlo.")
 
 if FORMULARIO_COMENTARIOS_URL:
