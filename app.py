@@ -627,3 +627,20 @@ if DOCUMENTO_LIM_URL:
     st.link_button("📄 ¿Qué es LIM?", DOCUMENTO_LIM_URL)
 else:
     st.caption("Próximamente: documento breve de presentación del proyecto LIM.")
+# ---------------------------------------------------------
+# CONTACTO
+# ---------------------------------------------------------
+
+st.markdown("---")
+
+st.markdown(
+    """
+    ### ¿Usaste este laboratorio?
+
+    Si sos docente y estás pensando utilizar este laboratorio, o ya lo probaste
+    con estudiantes, nos interesa conocer tu experiencia.
+
+    📩 **Contacto:**  
+    [fjbifano@ccpems.exactas.uba.ar](mailto:fjbifano@ccpems.exactas.uba.ar)
+    """
+)
